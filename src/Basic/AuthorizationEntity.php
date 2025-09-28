@@ -7,8 +7,8 @@ use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 final class AuthorizationEntity implements AuthorizationEntityInterface
 {
     public function __construct(
-        private string $id,
         private string $type,
+        private string $id,
         private array $attributes = []
     ) {}
 
