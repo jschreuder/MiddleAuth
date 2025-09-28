@@ -1,0 +1,31 @@
+{
+    "name": "jschreuder/middle-auth",
+    "description": "AuthZen implementation in PHP based on PSR-15 architecture",
+    "type": "library",
+    "require": {
+        "psr/log": "^3.0",
+        "php": ">=8.4"
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.1",
+        "mockery/mockery": "^1.6"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "jschreuder\\MiddleAuth\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jelmer Schreuder",
+            "email": "github@jelmerschreuder.nl"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
