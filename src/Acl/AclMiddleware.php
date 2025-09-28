@@ -29,7 +29,7 @@ final class AclMiddleware implements AuthorizationMiddlewareInterface
             $request->getContext()
         );
 
-        if (!$permitted && $handler) {
+        if (!$permitted) {
             return $handler->handle($request);
         }
 

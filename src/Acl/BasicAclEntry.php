@@ -53,7 +53,7 @@ final class BasicAclEntry implements AclEntryInterface
      */
     public function matchesAction(string $action): bool
     {
-        if ($action === '*') {
+        if ($this->actionMatcher === '*') {
             return true;
         }
         return $action === $this->actionMatcher;
