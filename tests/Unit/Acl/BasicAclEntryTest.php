@@ -20,8 +20,13 @@ describe('BasicAclEntry', function () {
         expect($entry->matchesActor($this->actor))->toBeTrue();
     });
 
-    it('matches actor with wildcard', function () {
+    it('matches actor with ID wildcard', function () {
         $entry = new BasicAclEntry('user::*', 'post::456', $this->action, null);
+        expect($entry->matchesActor($this->actor))->toBeTrue();
+    });
+
+    it('matches actor with full wildcard', function () {
+        $entry = new BasicAclEntry('*', 'post::456', $this->action, null);
         expect($entry->matchesActor($this->actor))->toBeTrue();
     });
 
@@ -35,8 +40,13 @@ describe('BasicAclEntry', function () {
         expect($entry->matchesResource($this->resource))->toBeTrue();
     });
 
-    it('matches resource with wildcard', function () {
+    it('matches resource with ID wildcard', function () {
         $entry = new BasicAclEntry('user::123', 'post::*', $this->action, null);
+        expect($entry->matchesResource($this->resource))->toBeTrue();
+    });
+
+    it('matches resource with full wildcard', function () {
+        $entry = new BasicAclEntry('user::123', '*', $this->action, null);
         expect($entry->matchesResource($this->resource))->toBeTrue();
     });
 

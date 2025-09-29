@@ -38,7 +38,7 @@ final class BasicAclEntry implements AclEntryInterface
      */
     public function matchesResource(AuthorizationEntityInterface $resource): bool
     {
-        if ($resource === '*') {
+        if ($this->resourceMatcher === '*') {
             return true;
         } elseif (substr($this->resourceMatcher, -3, 3) === '::*') {
             return $resource->getType() === substr($this->resourceMatcher, 0, -3);
