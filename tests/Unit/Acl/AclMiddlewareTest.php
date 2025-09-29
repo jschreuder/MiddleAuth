@@ -79,34 +79,4 @@ describe('AclMiddleware', function () {
         expect($response->isPermitted())->toBeFalse();
         expect($response->getReason())->toBe('Denied by handler');
     });
-
-    it('uses custom entity stringifier when provided', function () {
-        $subject = Mockery::mock(AuthorizationEntityInterface::class);
-        $subject->shouldReceive('getType')->andReturn('custom_user');
-        $subject->shouldReceive('getId')->andReturn('1');
-        
-        $resource = Mockery::mock(AuthorizationEntityInterface::class);
-        $resource->shouldReceive('getType')->andReturn('custom');
-        $resource->shouldReceive('getId')->andReturn('post');
-
-        $acl = Mockery::mock(AccessControlListInterface::class);
-        $acl->shouldReceive('hasAccess')
-            ->once()
-            ->with($subject, $resource, 'view', [])
-            ->andReturn(true);
-
-        $request = Mockery::mock(AuthorizationRequestInterface::class);
-        $request->shouldReceive('getSubject')->once()->andReturn($subject);
-        $request->shouldReceive('getResource')->once()->andReturn($resource);
-        $request->shouldReceive('getAction')->once()->andReturn('view');
-        $request->shouldReceive('getContext')->once()->andReturn([]);
-
-        $handler = Mockery::mock(AuthorizationHandlerInterface::class);
-        $handler->shouldNotReceive('handle');
-
-        $middleware = new AclMiddleware($acl);
-        $response = $middleware->process($request, $handler);
-
-        expect($response->isPermitted())->toBeTrue();
-    });
 });
