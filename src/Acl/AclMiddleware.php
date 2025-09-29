@@ -18,17 +18,15 @@ final class AclMiddleware implements AuthorizationMiddlewareInterface
 
     public function process(AuthorizationRequestInterface $request, AuthorizationHandlerInterface $handler): AuthorizationResponseInterface
     {
-        $permitted = $this->acl->hasAccess(
+        if ($this->acl->hasAccess(
             $request->getSubject(),
             $request->getResource(),
             $request->getAction(),
             $request->getContext()
-        );
-
-        if (!$permitted) {
-            return $handler->handle($request);
+        )) {
+            return new AuthorizationResponse(true, 'Checked against ACL', self::class);
         }
 
-        return new AuthorizationResponse($permitted, 'Checked against ACL', self::class);
+        return $handler->handle($request);
     }
 }
