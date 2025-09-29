@@ -11,20 +11,16 @@ use jschreuder\MiddleAuth\Basic\AuthorizationResponse;
 final class AclMiddleware implements AuthorizationMiddlewareInterface
 {
     public function __construct(
-        private AccessControlListInterface $acl,
-        private ?EntityStringifierInterface $entityStringifier = null
+        private AccessControlListInterface $acl
     )
     {
-        if (is_null($entityStringifier)) {
-            $this->entityStringifier = new BasicEntityStringifier();
-        }
     }
 
     public function process(AuthorizationRequestInterface $request, AuthorizationHandlerInterface $handler): AuthorizationResponseInterface
     {
         $permitted = $this->acl->hasAccess(
-            $this->entityStringifier->stringifyEntity($request->getSubject()),
-            $this->entityStringifier->stringifyEntity($request->getResource()),
+            $request->getSubject(),
+            $request->getResource(),
             $request->getAction(),
             $request->getContext()
         );

@@ -2,6 +2,8 @@
 
 namespace jschreuder\MiddleAuth\Acl;
 
+use jschreuder\MiddleAuth\AuthorizationEntityInterface;
+
 final class BasicAccessControlList implements AccessControlListInterface
 {
     /** @var AclEntryInterface[] */
@@ -12,7 +14,12 @@ final class BasicAccessControlList implements AccessControlListInterface
         $this->aclEntries = $aclEntries;
     }
 
-    public function hasAccess(string $actor, string $resource, string $action, ?array $context = null): bool
+    public function hasAccess(
+        AuthorizationEntityInterface $actor,
+        AuthorizationEntityInterface $resource,
+        string $action,
+        ?array $context = null
+    ): bool
     {
         foreach ($this->aclEntries as $aclEntry) {
             if (

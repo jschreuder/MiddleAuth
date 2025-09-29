@@ -3,6 +3,7 @@
 namespace jschreuder\MiddleAuth\Acl;
 
 use Closure;
+use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
 final class BasicAclEntry implements AclEntryInterface
 {
@@ -20,15 +21,14 @@ final class BasicAclEntry implements AclEntryInterface
      * means it will only have to match the type, otherwise it needs to be a
      * full match.
      */
-    public function matchesActor(string $actor): bool
+    public function matchesActor(AuthorizationEntityInterface $actor): bool
     {
-        if ($actor === '*') {
+        if ($this->actorMatcher === '*') {
             return true;
         } elseif (substr($this->actorMatcher, -3, 3) === '::*') {
-            [$actor, ] = explode('::', $actor, 2);
-            return $actor.'::*' === $this->actorMatcher;
+            return $actor->getType() === substr($this->actorMatcher, 0, -3);
         }
-        return $actor === $this->actorMatcher;
+        return $actor->getType().'::'.$actor->getId() === $this->actorMatcher;
     }
 
     /**
@@ -36,15 +36,14 @@ final class BasicAclEntry implements AclEntryInterface
      * means it will only have to match the type, otherwise it needs to be a
      * full match.
      */
-    public function matchesResource(string $resource): bool
+    public function matchesResource(AuthorizationEntityInterface $resource): bool
     {
         if ($resource === '*') {
             return true;
         } elseif (substr($this->resourceMatcher, -3, 3) === '::*') {
-            [$resource, ] = explode('::', $resource, 2);
-            return $resource.'::*' === $this->resourceMatcher;
+            return $resource->getType() === substr($this->resourceMatcher, 0, -3);
         }
-        return $resource === $this->resourceMatcher;
+        return $resource->getType().'::'.$resource->getId() === $this->resourceMatcher;
     }
 
     /**

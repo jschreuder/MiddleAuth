@@ -2,7 +2,14 @@
 
 namespace jschreuder\MiddleAuth\Acl;
 
+use jschreuder\MiddleAuth\AuthorizationEntityInterface;
+
 interface AccessControlListInterface
 {
-    public function hasAccess(string $actor, string $resource, string $action, ?array $context = null): bool;
+    public function hasAccess(
+        AuthorizationEntityInterface $actor, 
+        AuthorizationEntityInterface $resource, 
+        string $action, 
+        ?array $context = null
+    ): bool;
 }
