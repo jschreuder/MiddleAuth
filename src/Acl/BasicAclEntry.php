@@ -62,7 +62,7 @@ final class BasicAclEntry implements AclEntryInterface
      * Finally the context can add aditional constraints if all the previous
      * checks match.
      */
-    public function matchesContext(?array $context): bool
+    public function matchesContext(array $context): bool
     {
         if (!is_null($this->contextMatcher)) {
             return ($this->contextMatcher)($context);

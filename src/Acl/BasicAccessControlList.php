@@ -18,7 +18,7 @@ final class BasicAccessControlList implements AccessControlListInterface
         AuthorizationEntityInterface $actor,
         AuthorizationEntityInterface $resource,
         string $action,
-        ?array $context = null
+        array $context = []
     ): bool
     {
         foreach ($this->aclEntries as $aclEntry) {

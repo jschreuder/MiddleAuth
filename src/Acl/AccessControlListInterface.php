@@ -10,6 +10,6 @@ interface AccessControlListInterface
         AuthorizationEntityInterface $actor, 
         AuthorizationEntityInterface $resource, 
         string $action, 
-        ?array $context = null
+        array $context = []
     ): bool;
 }
