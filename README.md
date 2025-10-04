@@ -2,7 +2,7 @@
 
 **PHP 8.4+ Authorization Framework**
 
-A lightweight, flexible authorization library implementing ACL, RBAC, and ABAC patterns through a AuthZen and PSR-15-inspired middleware architecture.
+A lightweight, flexible authorization library implementing ACL, RBAC, and ABAC patterns through a [AuthZen](https://openid.net/wg/authzen/) and [PSR-15](https://www.php-fig.org/psr/psr-15/)-inspired middleware architecture.
 
 > ⚠️ **Alpha Status**: This library is in development and exploratory phase. The API will change. Not recommended for production use, though feel free to fork/take it for yourself.
 
@@ -391,7 +391,7 @@ $pipeline = (new AuthorizationPipeline(new \SplQueue()))
 
 ### 3. Use Attributes for Dynamic Data
 
-It is a good practice to include relevant attributes that might assist in access decissions.
+It is a good practice to include relevant attributes that might assist in access decisions.
 
 ```php
 $user = new AuthorizationEntity('user', '123', [
