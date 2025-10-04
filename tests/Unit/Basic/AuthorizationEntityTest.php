@@ -26,4 +26,24 @@ describe('Basic\AuthorizationEntity', function () {
 
         expect($entity->getAttributes())->toBe(['name' => 'John Doe']);
     });
+
+    it('throws exception when type is empty', function () {
+        expect(fn() => new AuthorizationEntity('', '123'))
+            ->toThrow(InvalidArgumentException::class, 'Type of AuthorizationEntity cannot be empty.');
+    });
+
+    it('throws exception when type is whitespace only', function () {
+        expect(fn() => new AuthorizationEntity('   ', '123'))
+            ->toThrow(InvalidArgumentException::class, 'Type of AuthorizationEntity cannot be empty.');
+    });
+
+    it('throws exception when id is empty', function () {
+        expect(fn() => new AuthorizationEntity('user', ''))
+            ->toThrow(InvalidArgumentException::class, 'ID of AuthorizationEntity cannot be empty.');
+    });
+
+    it('throws exception when id is whitespace only', function () {
+        expect(fn() => new AuthorizationEntity('user', '   '))
+            ->toThrow(InvalidArgumentException::class, 'ID of AuthorizationEntity cannot be empty.');
+    });
 });
