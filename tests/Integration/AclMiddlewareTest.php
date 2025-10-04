@@ -1,5 +1,6 @@
 <?php
 
+use jschreuder\MiddleAuth\Acl\AclEntriesCollection;
 use jschreuder\MiddleAuth\Acl\AclMiddleware;
 use jschreuder\MiddleAuth\Acl\BasicAclEntry;
 use jschreuder\MiddleAuth\Basic\AuthorizationEntity;
@@ -18,7 +19,7 @@ describe('AclMiddleware', function () {
 
         // Create ACL entry that matches our test case
         $aclEntry = new BasicAclEntry('user::123', 'order::567', 'view', null);
-        $middleware = new AclMiddleware($aclEntry);
+        $middleware = new AclMiddleware(new AclEntriesCollection($aclEntry));
 
         $request = new AuthorizationRequest($subject, $resource, 'view', []);
 
@@ -37,7 +38,7 @@ describe('AclMiddleware', function () {
 
         // Create ACL with entry that doesn't match
         $aclEntry = new BasicAclEntry('user::123', 'order::567', 'view', null);
-        $middleware = new AclMiddleware($aclEntry);
+        $middleware = new AclMiddleware(new AclEntriesCollection($aclEntry));
 
         $request = new AuthorizationRequest($subject, $resource, 'view', []);
 

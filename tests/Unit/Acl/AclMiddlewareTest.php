@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use jschreuder\MiddleAuth\Acl\AclEntriesCollection;
 use jschreuder\MiddleAuth\AuthorizationMiddlewareInterface;
 use jschreuder\MiddleAuth\Acl\AclEntryInterface;
 use jschreuder\MiddleAuth\Acl\AclMiddleware;
@@ -13,13 +14,13 @@ describe('Acl\AclMiddleware', function () {
     });
 
     it('implements AuthorizationMiddlewareInterface', function () {
-        $acl = new AclMiddleware();
+        $acl = new AclMiddleware(new AclEntriesCollection());
         expect($acl)->toBeInstanceOf(AuthorizationMiddlewareInterface::class);
     });
 
     it('can be instantiated with AclEntryInterface objects', function () {
         $aclEntry = Mockery::mock(AclEntryInterface::class);
-        $acl = new AclMiddleware($aclEntry);
+        $acl = new AclMiddleware(new AclEntriesCollection($aclEntry));
         expect($acl)->toBeInstanceOf(AclMiddleware::class);
     });
 
@@ -42,7 +43,7 @@ describe('Acl\AclMiddleware', function () {
         $handler = Mockery::mock(AuthorizationHandlerInterface::class);
         $handler->shouldNotReceive('handle');
 
-        $acl = new AclMiddleware($aclEntry);
+        $acl = new AclMiddleware(new AclEntriesCollection($aclEntry));
         $response = $acl->process($request, $handler);
 
         expect($response->isPermitted())->toBeTrue();
@@ -66,7 +67,7 @@ describe('Acl\AclMiddleware', function () {
         $handler = Mockery::mock(AuthorizationHandlerInterface::class);
         $handler->shouldReceive('handle')->once()->with($request)->andReturn($handlerResponse);
 
-        $acl = new AclMiddleware($aclEntry);
+        $acl = new AclMiddleware(new AclEntriesCollection($aclEntry));
         $response = $acl->process($request, $handler);
 
         expect($response)->toBe($handlerResponse);
@@ -94,7 +95,7 @@ describe('Acl\AclMiddleware', function () {
         $handler = Mockery::mock(AuthorizationHandlerInterface::class);
         $handler->shouldNotReceive('handle');
 
-        $acl = new AclMiddleware($aclEntry1, $aclEntry2);
+        $acl = new AclMiddleware(new AclEntriesCollection($aclEntry1, $aclEntry2));
         $response = $acl->process($request, $handler);
 
         expect($response->isPermitted())->toBeTrue();

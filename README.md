@@ -70,7 +70,7 @@ composer require jschreuder/middle-auth
 
 **Requirements:**
 - PHP 8.4 or higher
-- PSR Log interface (for logging support)
+- PSR-3 LoggerInterface (for optional logging support)
 
 ## 🚀 Getting Started
 
@@ -467,6 +467,71 @@ final class DocumentOwnershipEvaluator implements AccessEvaluatorInterface
     }
 }
 ```
+
+## 📊 Logging & Audit Trail
+
+MiddleAuth includes built-in support for PSR-3 logging to create comprehensive audit trails of authorization decisions.
+
+### Enabling Logging
+
+Logging is **optional** and can be added as the last constructor parameter:
+
+```php
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+// Create your PSR-3 logger
+$logger = new Logger('authorization');
+$logger->pushHandler(new StreamHandler('path/to/auth.log', Logger::DEBUG));
+
+// Add logger to pipeline
+$pipeline = new AuthorizationPipeline(new \SplQueue(), $logger);
+
+// Add logger to middleware (fluent interface)
+$aclMiddleware = new AclMiddleware($aclEntries, $logger);
+$rbacMiddleware = new RbacMiddleware($roleProvider, $logger);
+$abacMiddleware = new AbacMiddleware($policyProvider, $logger);
+$denyMiddleware = new DenyAllMiddleware($logger);
+
+// Build pipeline with logging enabled
+$pipeline = (new AuthorizationPipeline(new \SplQueue(), $logger))
+    ->withHandler($aclMiddleware)
+    ->withHandler($rbacMiddleware)
+    ->withHandler($abacMiddleware)
+    ->withHandler($denyMiddleware);
+```
+
+### What Gets Logged
+
+**Pipeline (INFO level)**:
+- Final authorization decisions (PERMIT/DENY)
+- Subject, resource, action, and which handler responded
+- Reason for the decision
+
+**Middleware (DEBUG level)**:
+- Each middleware's evaluation process
+- Which ACL entries, roles, or policies were checked
+- Match successes and delegation to next handler
+
+**Example Log Output** (INFO level):
+```
+[2024-01-15 10:23:45] authorization.INFO: Authorization decision: PERMIT {"subject_type":"user","subject_id":"123","resource_type":"document","resource_id":"456","action":"edit","permitted":true,"reason":"Access granted by AclMiddleware","handler":"jschreuder\\MiddleAuth\\Acl\\AclMiddleware"}
+```
+
+**Example Log Output** (DEBUG level):
+```
+[2024-01-15 10:23:45] authorization.DEBUG: Authorization pipeline processing request {"subject_type":"user","subject_id":"123","resource_type":"document","resource_id":"456","action":"edit"}
+[2024-01-15 10:23:45] authorization.DEBUG: ACL middleware evaluating request {"subject_type":"user","subject_id":"123","resource_type":"document","resource_id":"456","action":"edit","acl_entries_count":5}
+[2024-01-15 10:23:45] authorization.DEBUG: ACL entry matched {"entry_index":2,"subject_type":"user","subject_id":"123","action":"edit"}
+```
+
+### Security Considerations
+
+The logging implementation:
+- ✅ Logs only actor, resource and action for ACL and RBAC, and just the context keys for ABAC
+- ✅ Logs structured data for easy parsing and analysis
+- ✅ Includes enough detail for security audits
+- ⚠️ Consider sanitizing PII in entity attributes before logging
 
 ## 📄 License
 
