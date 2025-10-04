@@ -14,7 +14,6 @@ build:
       dependencies:
         before:
           - pecl install xdebug
-          - docker-php-ext-enable xdebug
       tests:
         override:
           - command: 'vendor/bin/pest --coverage --coverage-clover=coverage.xml'
