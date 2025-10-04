@@ -46,19 +46,19 @@ final class ClosureBasedAccessEvaluator implements AccessEvaluatorInterface
 
         // If we have 4 parameters, validate their types if type hints are present
         if ($paramCount === 4) {
-            if ($parameters[0]->hasType() && $parameters[0]->getType()?->getName() !== AuthorizationEntityInterface::class) {
+            if ($parameters[0]->hasType() && strval($parameters[0]->getType()) !== AuthorizationEntityInterface::class) {
                 throw new InvalidArgumentException('First parameter must be AuthorizationEntityInterface');
             }
 
-            if ($parameters[1]->hasType() && $parameters[1]->getType()?->getName() !== AuthorizationEntityInterface::class) {
+            if ($parameters[1]->hasType() && strval($parameters[1]->getType()) !== AuthorizationEntityInterface::class) {
                 throw new InvalidArgumentException('Second parameter must be AuthorizationEntityInterface');
             }
 
-            if ($parameters[2]->hasType() && $parameters[2]->getType()?->getName() !== 'string') {
+            if ($parameters[2]->hasType() && strval($parameters[2]->getType()) !== 'string') {
                 throw new InvalidArgumentException('Third parameter must be string');
             }
 
-            if ($parameters[3]->hasType() && $parameters[3]->getType()?->getName() !== 'array') {
+            if ($parameters[3]->hasType() && strval($parameters[3]->getType()) !== 'array') {
                 throw new InvalidArgumentException('Fourth parameter must be array');
             }
         }

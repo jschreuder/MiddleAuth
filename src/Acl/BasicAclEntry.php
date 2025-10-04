@@ -3,7 +3,6 @@
 namespace jschreuder\MiddleAuth\Acl;
 
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
-use jschreuder\MiddleAuth\Util\AccessEvaluatorInterface;
 
 final class BasicAclEntry implements AclEntryInterface
 {
