@@ -20,7 +20,7 @@ describe('Basic\DenyAllMiddleware', function () {
             'action',
             []
         );
-        $handler = new AuthorizationHandler(new SplStack);
+        $handler = new AuthorizationHandler(new SplQueue);
         $response = $middleware->process($request, $handler);
 
         expect($response->isPermitted())->toBe(false);

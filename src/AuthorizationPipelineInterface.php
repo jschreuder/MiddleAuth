@@ -4,10 +4,11 @@ namespace jschreuder\MiddleAuth;
 
 /**
  * Provides an authorization stack of middlewares to deal with determining
- * authorization of a given subject for a resource.
+ * authorization of a given subject for a resource. Implementations should
+ * be immutable and return new instances when changed.
  */
-interface AuthorizationStackInterface
+interface AuthorizationPipelineInterface
 {
-    public function addHandler(AuthorizationHandlerInterface $handler): self;
+    public function withHandler(AuthorizationHandlerInterface $handler): self;
     public function process(AuthorizationRequestInterface $request): AuthorizationResponseInterface;
 }

@@ -9,17 +9,17 @@ use jschreuder\MiddleAuth\AuthorizationResponseInterface;
 
 final class AuthorizationHandler implements AuthorizationHandlerInterface
 {
-    private \SplStack $stack;
+    private \SplQueue $queue;
     private bool $called = false;
 
-    public function __construct(\SplStack $stack)
+    public function __construct(\SplQueue $queue)
     {
-        $this->stack = $stack;
+        $this->queue = $queue;
     }
 
     public function handle(AuthorizationRequestInterface $request): AuthorizationResponseInterface
     {
-        if ($this->stack->count() === 0) {
+        if ($this->queue->count() === 0) {
             throw new \RuntimeException('No more handlers to call on.');
         }
         if ($this->called) {
@@ -27,9 +27,9 @@ final class AuthorizationHandler implements AuthorizationHandlerInterface
         }
 
         /** @var  AuthorizationMiddlewareInterface $next */
-        $next = $this->stack->pop();
+        $next = $this->queue->dequeue();
         $this->called = true;
 
-        return $next->process($request, new self($this->stack));
+        return $next->process($request, new self($this->queue));
     }
 }
