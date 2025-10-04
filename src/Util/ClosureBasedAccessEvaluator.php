@@ -13,9 +13,6 @@ final class ClosureBasedAccessEvaluator implements AccessEvaluatorInterface
 
     public function __construct(callable $evaluator)
     {
-        if (!is_callable($evaluator)) {
-            throw new InvalidArgumentException('Evaluator must be a callable');
-        }
         $this->evaluator = Closure::fromCallable($evaluator);
         $this->validateSignature();
     }
