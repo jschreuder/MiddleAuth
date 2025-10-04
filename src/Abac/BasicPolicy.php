@@ -3,7 +3,6 @@
 namespace jschreuder\MiddleAuth\Abac;
 
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
-use jschreuder\MiddleAuth\Util\AccessEvaluatorInterface;
 
 final class BasicPolicy implements PolicyInterface
 {

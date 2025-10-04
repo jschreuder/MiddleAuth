@@ -5,11 +5,10 @@ use jschreuder\MiddleAuth\Basic\AuthorizationRequest;
 use jschreuder\MiddleAuth\Abac\AbacMiddleware;
 use jschreuder\MiddleAuth\Abac\BasicPolicyProvider;
 use jschreuder\MiddleAuth\Abac\BasicPolicy;
-use jschreuder\MiddleAuth\Abac\PoliciesCollection;
+use jschreuder\MiddleAuth\Abac\ClosureBasedAccessEvaluator;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
-use jschreuder\MiddleAuth\Util\ClosureBasedAccessEvaluator;
 
 describe('AbacMiddleware', function () {
     afterEach(function () {

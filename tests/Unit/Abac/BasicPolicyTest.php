@@ -1,8 +1,8 @@
 <?php
 
 use jschreuder\MiddleAuth\Abac\BasicPolicy;
+use jschreuder\MiddleAuth\Abac\AccessEvaluatorInterface;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
-use jschreuder\MiddleAuth\Util\AccessEvaluatorInterface;
 
 afterEach(function () {
     Mockery::close();

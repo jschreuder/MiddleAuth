@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace jschreuder\MiddleAuth\Util;
+namespace jschreuder\MiddleAuth\Abac;
 
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
