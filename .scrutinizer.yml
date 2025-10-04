@@ -16,7 +16,7 @@ build:
           - pecl install xdebug
       tests:
         override:
-          - command: 'vendor/bin/pest --coverage --coverage-clover=coverage.xml'
+          - command: 'php -d zend_extension=xdebug.so -d xdebug.mode=coverage vendor/bin/pest --coverage --coverage-clover=coverage.xml'
             coverage:
               file: 'coverage.xml'
               format: 'php-clover'
