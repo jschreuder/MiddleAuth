@@ -7,7 +7,7 @@ use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 final class BasicRoleProvider implements RoleProviderInterface
 {
     /**
-     * @param array<string, RoleInterface[]> $roleMap Maps actor identifiers (type::id) to array of roles
+     * @param array<string, RolesCollection> $roleMap Maps actor identifiers (type::id) to RolesCollection
      */
     public function __construct(
         private array $roleMap
@@ -15,12 +15,9 @@ final class BasicRoleProvider implements RoleProviderInterface
     {
     }
 
-    /**
-     * @return RoleInterface[]
-     */
-    public function getRolesForActor(AuthorizationEntityInterface $actor): array
+    public function getRolesForActor(AuthorizationEntityInterface $actor): RolesCollection
     {
         $actorIdentifier = $actor->getType().'::'.$actor->getId();
-        return $this->roleMap[$actorIdentifier] ?? [];
+        return $this->roleMap[$actorIdentifier] ?? new RolesCollection();
     }
 }

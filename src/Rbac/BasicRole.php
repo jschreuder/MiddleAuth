@@ -4,13 +4,9 @@ namespace jschreuder\MiddleAuth\Rbac;
 
 final class BasicRole implements RoleInterface
 {
-    /**
-     * @param string $name
-     * @param PermissionInterface[] $permissions
-     */
     public function __construct(
         private string $name,
-        private array $permissions
+        private PermissionsCollection $permissions
     )
     {
     }
@@ -20,7 +16,7 @@ final class BasicRole implements RoleInterface
         return $this->name;
     }
 
-    public function getPermissions(): array
+    public function getPermissions(): PermissionsCollection
     {
         return $this->permissions;
     }

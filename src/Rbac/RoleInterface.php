@@ -5,5 +5,5 @@ namespace jschreuder\MiddleAuth\Rbac;
 interface RoleInterface
 {
     public function getName(): string;
-    public function getPermissions(): array;
+    public function getPermissions(): PermissionsCollection;
 }

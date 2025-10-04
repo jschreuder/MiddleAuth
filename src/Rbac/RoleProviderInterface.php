@@ -6,6 +6,5 @@ use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
 interface RoleProviderInterface
 {
-    /** @return RoleInterface[] */
-    public function getRolesForActor(AuthorizationEntityInterface $actor): array;
+    public function getRolesForActor(AuthorizationEntityInterface $actor): RolesCollection;
 }

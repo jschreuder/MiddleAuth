@@ -5,6 +5,8 @@ use jschreuder\MiddleAuth\Rbac\RoleBasedAccessControlInterface;
 use jschreuder\MiddleAuth\Rbac\RoleProviderInterface;
 use jschreuder\MiddleAuth\Rbac\RoleInterface;
 use jschreuder\MiddleAuth\Rbac\PermissionInterface;
+use jschreuder\MiddleAuth\Rbac\PermissionsCollection;
+use jschreuder\MiddleAuth\Rbac\RolesCollection;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
 describe('BasicRoleBasedAccessControl', function () {
@@ -28,10 +30,10 @@ describe('BasicRoleBasedAccessControl', function () {
         $permission->shouldReceive('matchesContext')->with([])->andReturn(true);
 
         $role = Mockery::mock(RoleInterface::class);
-        $role->shouldReceive('getPermissions')->andReturn([$permission]);
+        $role->shouldReceive('getPermissions')->andReturn(new PermissionsCollection($permission));
 
         $roleProvider = Mockery::mock(RoleProviderInterface::class);
-        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn([$role]);
+        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn(new RolesCollection($role));
 
         $rbac = new BasicRoleBasedAccessControl($roleProvider);
         $result = $rbac->hasAccess($actor, $resource, 'read');
@@ -47,10 +49,10 @@ describe('BasicRoleBasedAccessControl', function () {
         $permission->shouldReceive('matchesResource')->with($resource)->andReturn(false);
 
         $role = Mockery::mock(RoleInterface::class);
-        $role->shouldReceive('getPermissions')->andReturn([$permission]);
+        $role->shouldReceive('getPermissions')->andReturn(new PermissionsCollection($permission));
 
         $roleProvider = Mockery::mock(RoleProviderInterface::class);
-        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn([$role]);
+        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn(new RolesCollection($role));
 
         $rbac = new BasicRoleBasedAccessControl($roleProvider);
         $result = $rbac->hasAccess($actor, $resource, 'read');
@@ -63,7 +65,7 @@ describe('BasicRoleBasedAccessControl', function () {
         $resource = Mockery::mock(AuthorizationEntityInterface::class);
 
         $roleProvider = Mockery::mock(RoleProviderInterface::class);
-        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn([]);
+        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn(new RolesCollection());
 
         $rbac = new BasicRoleBasedAccessControl($roleProvider);
         $result = $rbac->hasAccess($actor, $resource, 'read');
@@ -84,13 +86,13 @@ describe('BasicRoleBasedAccessControl', function () {
         $permission2->shouldReceive('matchesContext')->with(['key' => 'value'])->andReturn(true);
 
         $role1 = Mockery::mock(RoleInterface::class);
-        $role1->shouldReceive('getPermissions')->andReturn([$permission1]);
+        $role1->shouldReceive('getPermissions')->andReturn(new PermissionsCollection($permission1));
 
         $role2 = Mockery::mock(RoleInterface::class);
-        $role2->shouldReceive('getPermissions')->andReturn([$permission2]);
+        $role2->shouldReceive('getPermissions')->andReturn(new PermissionsCollection($permission2));
 
         $roleProvider = Mockery::mock(RoleProviderInterface::class);
-        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn([$role1, $role2]);
+        $roleProvider->shouldReceive('getRolesForActor')->with($actor)->andReturn(new RolesCollection($role1, $role2));
 
         $rbac = new BasicRoleBasedAccessControl($roleProvider);
         $result = $rbac->hasAccess($actor, $resource, 'write', ['key' => 'value']);
