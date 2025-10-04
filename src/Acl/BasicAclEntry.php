@@ -10,8 +10,7 @@ final class BasicAclEntry implements AclEntryInterface
     public function __construct(
         private string $actorMatcher,
         private string $resourceMatcher,
-        private string $actionMatcher,
-        private ?AccessEvaluatorInterface $contextMatcher
+        private string $actionMatcher
     )
     {
     }

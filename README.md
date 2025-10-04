@@ -34,6 +34,8 @@ Request → ACL Check → RBAC Check → ABAC Check → Deny All
           Grant?       Grant?       Grant?       Deny
 ```
 
+To give an example of how this might work: Let's say you have a cloud-drive in which you can edit your own files, files that are shared with your teams and files that are shared with you specifically by another user. In the above example you would use ACL to check individual shares, RBAC to check your team roles and ABAC to show files that are owned by themselves and shared with people working in the physical office.
+
 ### Authorization Entity Wrapper
 
 Domain objects are wrapped in a generic `AuthorizationEntity` to decouple your business logic from the authorization system:
@@ -81,13 +83,13 @@ use jschreuder\MiddleAuth\Basic\{AuthorizationEntity, AuthorizationRequest, Auth
 // Define ACL rules
 $aclMiddleware = new AclMiddleware(
     // User 123 can view order 456
-    new BasicAclEntry('user::123', 'order::456', 'view', null),
+    new BasicAclEntry('user::123', 'order::456', 'view'),
     
     // All admins can do anything
-    new BasicAclEntry('admin::*', '*', '*', null),
+    new BasicAclEntry('admin::*', '*', '*'),
     
     // All users can view their own profile
-    new BasicAclEntry('user::*', 'profile::*', 'view', null)
+    new BasicAclEntry('user::*', 'profile::*', 'view')
 );
 
 // Create authorization pipeline
