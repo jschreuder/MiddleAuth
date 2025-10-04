@@ -1,5 +1,9 @@
 # MiddleAuth
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/badges/build.png?b=master)](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/?branch=master)
+
 **PHP 8.4+ Authorization Framework**
 
 A lightweight, flexible authorization library implementing ACL, RBAC, and ABAC patterns through a [AuthZen](https://openid.net/wg/authzen/) and [PSR-15](https://www.php-fig.org/psr/psr-15/)-inspired middleware architecture.
