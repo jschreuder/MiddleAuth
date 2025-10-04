@@ -33,7 +33,6 @@ final class AclMiddleware implements AuthorizationMiddlewareInterface
                 $aclEntry->matchesActor($actor)
                 && $aclEntry->matchesResource($resource)
                 && $aclEntry->matchesAction($action)
-                && $aclEntry->matchesContext($actor, $resource, $action, $context)
             ) {
                 return new AuthorizationResponse(
                     true,

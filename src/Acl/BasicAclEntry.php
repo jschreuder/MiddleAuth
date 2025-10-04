@@ -57,16 +57,4 @@ final class BasicAclEntry implements AclEntryInterface
         }
         return $action === $this->actionMatcher;
     }
-
-    /**
-     * Finally the context can add aditional constraints if all the previous
-     * checks match.
-     */
-    public function matchesContext(AuthorizationEntityInterface $actor, AuthorizationEntityInterface $resource, string $action, array $context): bool
-    {
-        if (!is_null($this->contextMatcher)) {
-            return $this->contextMatcher->hasAccess($actor, $resource, $action, $context);
-        }
-        return true;
-    }
 }
