@@ -10,7 +10,7 @@ build:
       tests:
         override:
           - php-scrutinizer-run
-    pest:
+    tests:
       tests:
         override:
           - command: 'vendor/bin/pest --coverage --coverage-clover=coverage.xml'
