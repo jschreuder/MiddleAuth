@@ -1,7 +1,7 @@
 build:
   environment:
     php:
-      version: 8.4.8
+      version: 8.4.6
       ini:
         'xdebug.mode': 'coverage'
   nodes:
