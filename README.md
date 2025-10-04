@@ -50,11 +50,15 @@ $actor = new AuthorizationEntity(
 );
 ```
 
-### Three Authorization Strategies
+### Three Included Authorization Strategies
 
-- **ACL (Access Control List)**: Direct actor-resource-action rules
-- **RBAC (Role-Based Access Control)**: Permissions grouped into roles
-- **ABAC (Attribute-Based Access Control)**: Dynamic rules based on attributes and context
+MiddleAuth provides pure implementations of three distinct authorization patterns:
+
+- **ACL (Access Control List)**: Direct actor-resource-action rules. Evaluates only the actor identity, resource identity, and action.
+- **RBAC (Role-Based Access Control)**: Permissions grouped into roles. Evaluates actor roles, resource identity, and action.
+- **ABAC (Attribute-Based Access Control)**: Dynamic rules based on attributes and context. Evaluates actor attributes, resource attributes, action, **and context** for complex business logic.
+
+**Note:** The included implementations follow pure pattern definitions—ACL and RBAC do not use context, only ABAC does. However, all `AuthorizationRequest` data (including context) is available to custom middleware implementations if you need hybrid approaches for your specific requirements.
 
 ## 📦 Installation
 
@@ -94,7 +98,7 @@ $pipeline = (new AuthorizationPipeline(new \SplQueue()))
 // Make authorization request
 $user = new AuthorizationEntity('user', '123');
 $order = new AuthorizationEntity('order', '456');
-$request = new AuthorizationRequest($user, $order, 'view', []);
+$request = new AuthorizationRequest($user, $order, 'view', []); // Context (empty array) ignored by ACL
 
 $response = $pipeline->process($request);
 
@@ -142,6 +146,8 @@ $rbacMiddleware = new RbacMiddleware($roleProvider);
 $pipeline = (new AuthorizationPipeline(new \SplQueue()))
     ->withHandler($rbacMiddleware)
     ->withHandler(new DenyAllMiddleware());
+
+// Note: RBAC ignores context in authorization requests
 ```
 
 ### ABAC Example
@@ -264,37 +270,48 @@ final class BusinessRulesPolicyProvider implements PolicyProviderInterface
 }
 ```
 
-#### 3. Context-Aware Evaluators
+#### 3. Context-Aware Evaluators (ABAC Only)
 
 ```php
 // Time-based access control
-$businessHoursOnly = new ClosureBasedAccessEvaluator(
-    function ($actor, $resource, $action, $context) {
-        $hour = (int) date('H');
-        return $hour >= 9 && $hour < 17; // 9 AM to 5 PM
-    }
+$businessHoursOnly = new BasicPolicy(
+    new ClosureBasedAccessEvaluator(
+        function ($actor, $resource, $action, $context) {
+            $hour = (int) date('H');
+            return $hour >= 9 && $hour < 17; // 9 AM to 5 PM
+        }
+    ),
+    'Access restricted to business hours'
 );
 
 // IP-based restrictions
-$internalNetworkOnly = new ClosureBasedAccessEvaluator(
-    function ($actor, $resource, $action, $context) {
-        $clientIp = $context['client_ip'] ?? null;
-        return str_starts_with($clientIp, '192.168.');
-    }
+$internalNetworkOnly = new BasicPolicy(
+    new ClosureBasedAccessEvaluator(
+        function ($actor, $resource, $action, $context) {
+            $clientIp = $context['client_ip'] ?? null;
+            return str_starts_with($clientIp, '192.168.');
+        }
+    ),
+    'Access restricted to internal network'
 );
 
-// Combine multiple conditions
-$restrictedEntry = new BasicAclEntry(
-    'user::*',
-    'admin-panel::*',
-    '*',
-    contextMatcher: new ClosureBasedAccessEvaluator(
-        function ($actor, $resource, $action, $context) use ($businessHoursOnly, $internalNetworkOnly) {
-            return $businessHoursOnly->hasAccess($actor, $resource, $action, $context)
-                && $internalNetworkOnly->hasAccess($actor, $resource, $action, $context);
+// Combine multiple conditions in a single policy
+$restrictedAccess = new BasicPolicy(
+    new ClosureBasedAccessEvaluator(
+        function ($actor, $resource, $action, $context) {
+            $hour = (int) date('H');
+            $isBusinessHours = $hour >= 9 && $hour < 17;
+            $clientIp = $context['client_ip'] ?? null;
+            $isInternalNetwork = str_starts_with($clientIp, '192.168.');
+
+            return $isBusinessHours && $isInternalNetwork;
         }
-    )
+    ),
+    'Admin panel access restricted to business hours on internal network'
 );
+
+$policyProvider = new BasicPolicyProvider($businessHoursOnly, $internalNetworkOnly, $restrictedAccess);
+$abacMiddleware = new AbacMiddleware($policyProvider);
 ```
 
 #### 4. Framework Integration (PSR-15 Example)
@@ -408,7 +425,7 @@ $document = new AuthorizationEntity('document', '456', [
 ]);
 ```
 
-### 4. Leverage Context for Request-Specific Data
+### 4. Leverage Context for Request-Specific Data (ABAC Only)
 
 ```php
 $request = new AuthorizationRequest(
@@ -422,6 +439,8 @@ $request = new AuthorizationRequest(
         'mfa_verified' => $session->get('mfa_verified'),
     ]
 );
+
+// This context will only be used by ABAC policies, not by ACL or RBAC handlers
 ```
 
 ### 5. Create Domain-Specific Evaluators
