@@ -33,7 +33,6 @@ final class RbacMiddleware implements AuthorizationMiddlewareInterface
                 if (
                     $permission->matchesResource($resource)
                     && $permission->matchesAction($action)
-                    && $permission->matchesContext($actor, $resource, $action, $context)
                 ) {
                     return new AuthorizationResponse(
                         true,
