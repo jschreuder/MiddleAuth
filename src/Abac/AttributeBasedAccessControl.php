@@ -2,9 +2,10 @@
 
 namespace jschreuder\MiddleAuth\Abac;
 
+use jschreuder\MiddleAuth\AccessControlInterface;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-final class BasicAttributeBasedAccessControl implements AttributeBasedAccessControlInterface
+final class AttributeBasedAccessControl implements AccessControlInterface
 {
     public function __construct(
         private PolicyProviderInterface $policyProvider

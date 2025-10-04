@@ -1,20 +1,20 @@
 <?php declare(strict_types=1);
 
-use jschreuder\MiddleAuth\Acl\AccessControlListInterface;
+use jschreuder\MiddleAuth\AccessControlInterface;
 use jschreuder\MiddleAuth\Acl\AclEntryInterface;
-use jschreuder\MiddleAuth\Acl\BasicAccessControlList;
+use jschreuder\MiddleAuth\Acl\AccessControlList;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-describe('BasicAccessControlList', function () {
-    it('implements AccessControlListInterface', function () {
-        $acl = new BasicAccessControlList();
-        expect($acl)->toBeInstanceOf(AccessControlListInterface::class);
+describe('Acl\AccessControlList', function () {
+    it('implements AccessControlInterface', function () {
+        $acl = new AccessControlList();
+        expect($acl)->toBeInstanceOf(AccessControlInterface::class);
     });
 
     it('can be instantiated with AclEntryInterface objects', function () {
         $aclEntry = Mockery::mock(AclEntryInterface::class);
-        $acl = new BasicAccessControlList($aclEntry);
-        expect($acl)->toBeInstanceOf(BasicAccessControlList::class);
+        $acl = new AccessControlList($aclEntry);
+        expect($acl)->toBeInstanceOf(AccessControlList::class);
     });
 
     it('returns true when an AclEntry matches all conditions', function () {
@@ -27,7 +27,7 @@ describe('BasicAccessControlList', function () {
         $aclEntry->shouldReceive('matchesAction')->with('read')->andReturn(true);
         $aclEntry->shouldReceive('matchesContext')->with(null)->andReturn(true);
 
-        $acl = new BasicAccessControlList($aclEntry);
+        $acl = new AccessControlList($aclEntry);
         $result = $acl->hasAccess($user, $resource, 'read');
         expect($result)->toBeTrue();
     });
@@ -39,7 +39,7 @@ describe('BasicAccessControlList', function () {
         $aclEntry = Mockery::mock(AclEntryInterface::class);
         $aclEntry->shouldReceive('matchesActor')->with($user)->andReturn(false);
 
-        $acl = new BasicAccessControlList($aclEntry);
+        $acl = new AccessControlList($aclEntry);
         $result = $acl->hasAccess($user, $resource, 'read');
         expect($result)->toBeFalse();
     });
@@ -57,7 +57,7 @@ describe('BasicAccessControlList', function () {
         $aclEntry2->shouldReceive('matchesAction')->with('read')->andReturn(true);
         $aclEntry2->shouldReceive('matchesContext')->with(null)->andReturn(true);
 
-        $acl = new BasicAccessControlList($aclEntry1, $aclEntry2);
+        $acl = new AccessControlList($aclEntry1, $aclEntry2);
         $result = $acl->hasAccess($user, $resource, 'read');
         expect($result)->toBeTrue();
     });

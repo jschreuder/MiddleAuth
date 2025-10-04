@@ -2,9 +2,10 @@
 
 namespace jschreuder\MiddleAuth\Acl;
 
+use jschreuder\MiddleAuth\AccessControlInterface;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-final class BasicAccessControlList implements AccessControlListInterface
+final class AccessControlList implements AccessControlInterface
 {
     /** @var AclEntryInterface[] */
     private array $aclEntries;

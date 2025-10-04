@@ -2,9 +2,10 @@
 
 namespace jschreuder\MiddleAuth\Rbac;
 
+use jschreuder\MiddleAuth\AccessControlInterface;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-final class BasicRoleBasedAccessControl implements RoleBasedAccessControlInterface
+final class RoleBasedAccessControl implements AccessControlInterface
 {
     public function __construct(
         private RoleProviderInterface $roleProvider

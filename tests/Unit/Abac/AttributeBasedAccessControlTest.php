@@ -1,21 +1,21 @@
 <?php
 
-use jschreuder\MiddleAuth\Abac\BasicAttributeBasedAccessControl;
-use jschreuder\MiddleAuth\Abac\AttributeBasedAccessControlInterface;
+use jschreuder\MiddleAuth\AccessControlInterface;
+use jschreuder\MiddleAuth\Abac\AttributeBasedAccessControl;
 use jschreuder\MiddleAuth\Abac\PolicyProviderInterface;
 use jschreuder\MiddleAuth\Abac\PolicyInterface;
 use jschreuder\MiddleAuth\Abac\PoliciesCollection;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-describe('BasicAttributeBasedAccessControl', function () {
+describe('Abac\AttributeBasedAccessControl', function () {
     afterEach(function () {
         Mockery::close();
     });
 
-    it('implements AttributeBasedAccessControlInterface', function () {
+    it('implements AccessControlInterface', function () {
         $policyProvider = Mockery::mock(PolicyProviderInterface::class);
-        $abac = new BasicAttributeBasedAccessControl($policyProvider);
-        expect($abac)->toBeInstanceOf(AttributeBasedAccessControlInterface::class);
+        $abac = new AttributeBasedAccessControl($policyProvider);
+        expect($abac)->toBeInstanceOf(AccessControlInterface::class);
     });
 
     it('returns true when a policy evaluates to true', function () {
@@ -32,7 +32,7 @@ describe('BasicAttributeBasedAccessControl', function () {
             ->with($actor, $resource, 'read', [])
             ->andReturn(new PoliciesCollection($policy));
 
-        $abac = new BasicAttributeBasedAccessControl($policyProvider);
+        $abac = new AttributeBasedAccessControl($policyProvider);
         $result = $abac->hasAccess($actor, $resource, 'read');
 
         expect($result)->toBeTrue();
@@ -52,7 +52,7 @@ describe('BasicAttributeBasedAccessControl', function () {
             ->with($actor, $resource, 'read', [])
             ->andReturn(new PoliciesCollection($policy));
 
-        $abac = new BasicAttributeBasedAccessControl($policyProvider);
+        $abac = new AttributeBasedAccessControl($policyProvider);
         $result = $abac->hasAccess($actor, $resource, 'read');
 
         expect($result)->toBeFalse();
@@ -67,7 +67,7 @@ describe('BasicAttributeBasedAccessControl', function () {
             ->with($actor, $resource, 'read', [])
             ->andReturn(new PoliciesCollection());
 
-        $abac = new BasicAttributeBasedAccessControl($policyProvider);
+        $abac = new AttributeBasedAccessControl($policyProvider);
         $result = $abac->hasAccess($actor, $resource, 'read');
 
         expect($result)->toBeFalse();
@@ -92,7 +92,7 @@ describe('BasicAttributeBasedAccessControl', function () {
             ->with($actor, $resource, 'write', ['key' => 'value'])
             ->andReturn(new PoliciesCollection($policy1, $policy2));
 
-        $abac = new BasicAttributeBasedAccessControl($policyProvider);
+        $abac = new AttributeBasedAccessControl($policyProvider);
         $result = $abac->hasAccess($actor, $resource, 'write', ['key' => 'value']);
 
         expect($result)->toBeTrue();
