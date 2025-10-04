@@ -2,10 +2,11 @@
 
 namespace jschreuder\MiddleAuth\Abac;
 
+use Countable;
 use IteratorAggregate;
 use jschreuder\MiddleAuth\Util\CollectionTrait;
 
-final class PoliciesCollection implements IteratorAggregate
+final class PoliciesCollection implements IteratorAggregate, Countable
 {
     use CollectionTrait;
 

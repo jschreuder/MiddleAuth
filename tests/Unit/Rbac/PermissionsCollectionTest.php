@@ -15,6 +15,15 @@ describe('Rbac\PermissionsCollection', function () {
             ->and($collection->count())->toBe(0);
     });
 
+    it ('is countable', function () {
+        $permission1 = Mockery::mock(PermissionInterface::class);
+        $permission2 = Mockery::mock(PermissionInterface::class);
+        $permission3 = Mockery::mock(PermissionInterface::class);
+        $collection = new PermissionsCollection($permission1, $permission2, $permission3);
+
+        expect(count($collection))->toBe(3);
+    });
+
     it('can be created with permissions', function () {
         $permission1 = Mockery::mock(PermissionInterface::class);
         $permission2 = Mockery::mock(PermissionInterface::class);

@@ -24,6 +24,15 @@ describe('PoliciesCollection', function () {
         expect($collection->isEmpty())->toBeTrue();
     });
 
+    it ('is countable', function () {
+        $policy1 = Mockery::mock(PolicyInterface::class);
+        $policy2 = Mockery::mock(PolicyInterface::class);
+        $policy3 = Mockery::mock(PolicyInterface::class);
+        $collection = new PoliciesCollection($policy1, $policy2, $policy3);
+
+        expect(count($collection))->toBe(3);
+    });
+
     it('can be iterated', function () {
         $policy1 = Mockery::mock(PolicyInterface::class);
         $policy2 = Mockery::mock(PolicyInterface::class);

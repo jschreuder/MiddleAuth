@@ -15,6 +15,15 @@ describe('Rbac\RolesCollection', function () {
             ->and($collection->count())->toBe(0);
     });
 
+    it ('is countable', function () {
+        $role1 = Mockery::mock(RoleInterface::class);
+        $role2 = Mockery::mock(RoleInterface::class);
+        $role3 = Mockery::mock(RoleInterface::class);
+        $collection = new RolesCollection($role1, $role2, $role3);
+
+        expect(count($collection))->toBe(3);
+    });
+
     it('can be created with roles', function () {
         $role1 = Mockery::mock(RoleInterface::class);
         $role2 = Mockery::mock(RoleInterface::class);

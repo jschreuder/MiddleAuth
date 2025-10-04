@@ -2,10 +2,11 @@
 
 namespace jschreuder\MiddleAuth\Rbac;
 
+use Countable;
 use IteratorAggregate;
 use jschreuder\MiddleAuth\Util\CollectionTrait;
 
-final class PermissionsCollection implements IteratorAggregate
+final class PermissionsCollection implements IteratorAggregate, Countable
 {
     use CollectionTrait;
 
