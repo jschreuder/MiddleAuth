@@ -1,9 +1,8 @@
 <?php
 
-use jschreuder\MiddleAuth\Basic\AccessControlMiddleware;
 use jschreuder\MiddleAuth\Basic\AuthorizationEntity;
 use jschreuder\MiddleAuth\Basic\AuthorizationRequest;
-use jschreuder\MiddleAuth\Abac\AttributeBasedAccessControl;
+use jschreuder\MiddleAuth\Abac\AbacMiddleware;
 use jschreuder\MiddleAuth\Abac\BasicPolicyProvider;
 use jschreuder\MiddleAuth\Abac\BasicPolicy;
 use jschreuder\MiddleAuth\Abac\PoliciesCollection;
@@ -12,7 +11,7 @@ use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
 use jschreuder\MiddleAuth\Util\ClosureBasedAccessEvaluator;
 
-describe('AccessControlMiddleware with ABAC', function () {
+describe('AbacMiddleware', function () {
     afterEach(function () {
         Mockery::close();
     });
@@ -37,18 +36,17 @@ describe('AccessControlMiddleware with ABAC', function () {
         );
 
         $policyProvider = new BasicPolicyProvider($policy);
-        $abac = new AttributeBasedAccessControl($policyProvider);
+        $middleware = new AbacMiddleware($policyProvider);
 
         $request = new AuthorizationRequest($subject, $resource, 'view', []);
 
         $handler = Mockery::mock(AuthorizationHandlerInterface::class);
         $handler->shouldNotReceive('handle');
 
-        $middleware = new AccessControlMiddleware($abac);
         $response = $middleware->process($request, $handler);
 
         expect($response->isPermitted())->toBeTrue();
-        expect($response->getReason())->toContain('AttributeBasedAccessControl');
+        expect($response->getReason())->toContain('AbacMiddleware');
     });
 
     it('denies access when ABAC denies', function () {
@@ -57,7 +55,7 @@ describe('AccessControlMiddleware with ABAC', function () {
 
         // Create policy provider with no policies
         $policyProvider = new BasicPolicyProvider();
-        $abac = new AttributeBasedAccessControl($policyProvider);
+        $middleware = new AbacMiddleware($policyProvider);
 
         $request = new AuthorizationRequest($subject, $resource, 'view', []);
 
@@ -71,7 +69,6 @@ describe('AccessControlMiddleware with ABAC', function () {
             ->with($request)
             ->andReturn($deniedResponse);
 
-        $middleware = new AccessControlMiddleware($abac);
         $response = $middleware->process($request, $handler);
 
         expect($response->isPermitted())->toBeFalse();
