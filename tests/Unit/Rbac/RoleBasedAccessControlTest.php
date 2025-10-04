@@ -27,7 +27,7 @@ describe('Rbac\RoleBasedAccessControl', function () {
         $permission = Mockery::mock(PermissionInterface::class);
         $permission->shouldReceive('matchesResource')->with($resource)->andReturn(true);
         $permission->shouldReceive('matchesAction')->with('read')->andReturn(true);
-        $permission->shouldReceive('matchesContext')->with([])->andReturn(true);
+        $permission->shouldReceive('matchesContext')->with($actor, $resource, 'read', [])->andReturn(true);
 
         $role = Mockery::mock(RoleInterface::class);
         $role->shouldReceive('getPermissions')->andReturn(new PermissionsCollection($permission));
@@ -83,7 +83,7 @@ describe('Rbac\RoleBasedAccessControl', function () {
         $permission2 = Mockery::mock(PermissionInterface::class);
         $permission2->shouldReceive('matchesResource')->with($resource)->andReturn(true);
         $permission2->shouldReceive('matchesAction')->with('write')->andReturn(true);
-        $permission2->shouldReceive('matchesContext')->with(['key' => 'value'])->andReturn(true);
+        $permission2->shouldReceive('matchesContext')->with($actor, $resource, 'write', ['key' => 'value'])->andReturn(true);
 
         $role1 = Mockery::mock(RoleInterface::class);
         $role1->shouldReceive('getPermissions')->andReturn(new PermissionsCollection($permission1));

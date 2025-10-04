@@ -2,15 +2,15 @@
 
 namespace jschreuder\MiddleAuth\Rbac;
 
-use Closure;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
+use jschreuder\MiddleAuth\Util\AccessEvaluatorInterface;
 
 final class BasicPermission implements PermissionInterface
 {
     public function __construct(
         private string $resourceMatcher,
         private string $actionMatcher,
-        private ?Closure $contextMatcher = null
+        private ?AccessEvaluatorInterface $contextMatcher = null
     )
     {
     }
@@ -46,10 +46,10 @@ final class BasicPermission implements PermissionInterface
      * Finally the context can add aditional constraints if all the previous
      * checks match.
      */
-    public function matchesContext(array $context): bool
+    public function matchesContext(AuthorizationEntityInterface $actor, AuthorizationEntityInterface $resource, string $action, array $context): bool
     {
         if (!is_null($this->contextMatcher)) {
-            return ($this->contextMatcher)($context);
+            return $this->contextMatcher->hasAccess($actor, $resource, $action, $context);
         }
         return true;
     }

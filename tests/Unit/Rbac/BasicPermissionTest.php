@@ -2,12 +2,14 @@
 
 use jschreuder\MiddleAuth\Rbac\BasicPermission;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
+use jschreuder\MiddleAuth\Util\AccessEvaluatorInterface;
 
 afterEach(function () {
     Mockery::close();
 });
 
 beforeEach(function () {
+    $this->actor = Mockery::mock(AuthorizationEntityInterface::class);
     $this->resource = Mockery::mock(AuthorizationEntityInterface::class);
     $this->resource->shouldReceive('getType')->andReturn('post');
     $this->resource->shouldReceive('getId')->andReturn('456');
@@ -53,20 +55,28 @@ describe('BasicPermission', function () {
 
     it('matches context with no context matcher', function () {
         $permission = new BasicPermission('post::456', $this->action);
-        expect($permission->matchesContext($this->context))->toBeTrue();
+        expect($permission->matchesContext($this->actor, $this->resource, $this->action, $this->context))->toBeTrue();
     });
 
     it('matches context with context matcher returning true', function () {
-        $contextMatcher = function (array $context) { return true; };
+        $contextMatcher = Mockery::mock(AccessEvaluatorInterface::class);
+        $contextMatcher->shouldReceive('hasAccess')
+            ->once()
+            ->with($this->actor, $this->resource, $this->action, $this->context)
+            ->andReturn(true);
 
         $permission = new BasicPermission('post::456', $this->action, $contextMatcher);
-        expect($permission->matchesContext($this->context))->toBeTrue();
+        expect($permission->matchesContext($this->actor, $this->resource, $this->action, $this->context))->toBeTrue();
     });
 
     it('does not match context with context matcher returning false', function () {
-        $contextMatcher = function (array $context) { return false; };
+        $contextMatcher = Mockery::mock(AccessEvaluatorInterface::class);
+        $contextMatcher->shouldReceive('hasAccess')
+            ->once()
+            ->with($this->actor, $this->resource, $this->action, $this->context)
+            ->andReturn(false);
 
         $permission = new BasicPermission('post::456', $this->action, $contextMatcher);
-        expect($permission->matchesContext($this->context))->toBeFalse();
+        expect($permission->matchesContext($this->actor, $this->resource, $this->action, $this->context))->toBeFalse();
     });
 });

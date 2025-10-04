@@ -27,7 +27,7 @@ final class AccessControlList implements AccessControlInterface
                 $aclEntry->matchesActor($actor)
                 && $aclEntry->matchesResource($resource)
                 && $aclEntry->matchesAction($action)
-                && $aclEntry->matchesContext($context)
+                && $aclEntry->matchesContext($actor, $resource, $action, $context)
             ) {
                 return true;
             }

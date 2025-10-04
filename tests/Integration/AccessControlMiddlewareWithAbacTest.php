@@ -10,6 +10,7 @@ use jschreuder\MiddleAuth\Abac\PoliciesCollection;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
+use jschreuder\MiddleAuth\Util\ClosureBasedAccessEvaluator;
 
 describe('AccessControlMiddleware with ABAC', function () {
     afterEach(function () {
@@ -21,13 +22,17 @@ describe('AccessControlMiddleware with ABAC', function () {
         $resource = new AuthorizationEntity('document', '567');
 
         // Create policy that allows user 123 to view document 567
-        $policy = new BasicPolicy(
+        $evaluator = new ClosureBasedAccessEvaluator(
             function (AuthorizationEntityInterface $actor, AuthorizationEntityInterface $res, string $action, array $context) {
                 return $actor->getId() === '123'
                     && $res->getType() === 'document'
                     && $res->getId() === '567'
                     && $action === 'view';
-            },
+            }
+        );
+
+        $policy = new BasicPolicy(
+            $evaluator,
             'Allow user 123 to view document 567'
         );
 

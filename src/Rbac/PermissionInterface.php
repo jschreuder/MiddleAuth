@@ -8,5 +8,5 @@ interface PermissionInterface
 {
     public function matchesResource(AuthorizationEntityInterface $resource): bool;
     public function matchesAction(string $action): bool;
-    public function matchesContext(array $context): bool;
+    public function matchesContext(AuthorizationEntityInterface $actor, AuthorizationEntityInterface $resource, string $action, array $context): bool;
 }

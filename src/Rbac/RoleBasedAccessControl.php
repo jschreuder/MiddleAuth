@@ -27,7 +27,7 @@ final class RoleBasedAccessControl implements AccessControlInterface
                 if (
                     $permission->matchesResource($resource)
                     && $permission->matchesAction($action)
-                    && $permission->matchesContext($context)
+                    && $permission->matchesContext($actor, $resource, $action, $context)
                 ) {
                     return true;
                 }

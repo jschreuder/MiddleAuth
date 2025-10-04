@@ -25,7 +25,7 @@ describe('Acl\AccessControlList', function () {
         $aclEntry->shouldReceive('matchesActor')->with($user)->andReturn(true);
         $aclEntry->shouldReceive('matchesResource')->with($resource)->andReturn(true);
         $aclEntry->shouldReceive('matchesAction')->with('read')->andReturn(true);
-        $aclEntry->shouldReceive('matchesContext')->with(null)->andReturn(true);
+        $aclEntry->shouldReceive('matchesContext')->with($user, $resource, 'read', [])->andReturn(true);
 
         $acl = new AccessControlList($aclEntry);
         $result = $acl->hasAccess($user, $resource, 'read');
@@ -55,7 +55,7 @@ describe('Acl\AccessControlList', function () {
         $aclEntry2->shouldReceive('matchesActor')->with($user)->andReturn(true);
         $aclEntry2->shouldReceive('matchesResource')->with($resource)->andReturn(true);
         $aclEntry2->shouldReceive('matchesAction')->with('read')->andReturn(true);
-        $aclEntry2->shouldReceive('matchesContext')->with(null)->andReturn(true);
+        $aclEntry2->shouldReceive('matchesContext')->with($user, $resource, 'read', [])->andReturn(true);
 
         $acl = new AccessControlList($aclEntry1, $aclEntry2);
         $result = $acl->hasAccess($user, $resource, 'read');
