@@ -6,6 +6,7 @@ use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 use Closure;
 use InvalidArgumentException;
 use ReflectionFunction;
+use ReflectionParameter;
 
 final class ClosureBasedAccessEvaluator implements AccessEvaluatorInterface
 {
@@ -25,42 +26,25 @@ final class ClosureBasedAccessEvaluator implements AccessEvaluatorInterface
     private function validateSignature(): void
     {
         $reflection = new ReflectionFunction($this->evaluator);
-
         $parameters = $reflection->getParameters();
-        $paramCount = count($parameters);
 
-        // Only validate parameter count if any parameters have type hints
-        $hasTypeHints = false;
-        foreach ($parameters as $param) {
-            if ($param->hasType()) {
-                $hasTypeHints = true;
-                break;
-            }
-        }
-
-        if ($hasTypeHints && $paramCount !== 4) {
+        if (count($parameters) !== 4) {
             throw new InvalidArgumentException(
-                'Evaluator must accept exactly 4 parameters (AuthorizationEntityInterface, AuthorizationEntityInterface, string, array)'
+                'AccessEvaluator must accept exactly 4 parameters (AuthorizationEntityInterface, AuthorizationEntityInterface, string, array)'
             );
         }
 
         // If we have 4 parameters, validate their types if type hints are present
-        if ($paramCount === 4) {
-            if ($parameters[0]->hasType() && strval($parameters[0]->getType()) !== AuthorizationEntityInterface::class) {
-                throw new InvalidArgumentException('First parameter must be AuthorizationEntityInterface');
-            }
+        $this->checkType($parameters[0], 1, AuthorizationEntityInterface::class);
+        $this->checkType($parameters[1], 2, AuthorizationEntityInterface::class);
+        $this->checkType($parameters[2], 3, 'string');
+        $this->checkType($parameters[3], 4, 'array');
+    }
 
-            if ($parameters[1]->hasType() && strval($parameters[1]->getType()) !== AuthorizationEntityInterface::class) {
-                throw new InvalidArgumentException('Second parameter must be AuthorizationEntityInterface');
-            }
-
-            if ($parameters[2]->hasType() && strval($parameters[2]->getType()) !== 'string') {
-                throw new InvalidArgumentException('Third parameter must be string');
-            }
-
-            if ($parameters[3]->hasType() && strval($parameters[3]->getType()) !== 'array') {
-                throw new InvalidArgumentException('Fourth parameter must be array');
-            }
+    private function checkType(ReflectionParameter $parameter, int $number, string $type)
+    {
+        if (!$parameter->hasType() || strval($parameter->getType()) !== $type) {
+            throw new InvalidArgumentException('Parameter '.$number.' must be '.$type);
         }
     }
 }

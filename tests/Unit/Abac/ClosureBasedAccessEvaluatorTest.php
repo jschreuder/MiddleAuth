@@ -12,7 +12,12 @@ describe('Abac/ClosureBasedAccessEvaluator', function () {
         $actor = Mockery::mock(AuthorizationEntityInterface::class);
         $resource = Mockery::mock(AuthorizationEntityInterface::class);
 
-        $evaluator = function ($a, $r, $action, $context) use ($actor, $resource) {
+        $evaluator = function (
+            AuthorizationEntityInterface $a, 
+            AuthorizationEntityInterface$r, 
+            string $action, 
+            array $context
+        ) use ($actor, $resource) {
             expect($a)->toBe($actor);
             expect($r)->toBe($resource);
             expect($action)->toBe('read');
@@ -30,7 +35,12 @@ describe('Abac/ClosureBasedAccessEvaluator', function () {
         $actor = Mockery::mock(AuthorizationEntityInterface::class);
         $resource = Mockery::mock(AuthorizationEntityInterface::class);
 
-        $accessEvaluator = new ClosureBasedAccessEvaluator(fn() => false);
+        $accessEvaluator = new ClosureBasedAccessEvaluator(fn(
+            AuthorizationEntityInterface $a, 
+            AuthorizationEntityInterface$r, 
+            string $action, 
+            array $context
+        ) => false);
         $result = $accessEvaluator->hasAccess($actor, $resource, 'write', []);
 
         expect($result)->toBeFalse();
@@ -43,7 +53,12 @@ describe('Abac/ClosureBasedAccessEvaluator', function () {
         $resource = Mockery::mock(AuthorizationEntityInterface::class);
         $resource->shouldReceive('getAttributes')->andReturn(['owner_department' => 'engineering']);
 
-        $evaluator = function ($a, $r, $action, $context) {
+        $evaluator = function (
+            AuthorizationEntityInterface $a, 
+            AuthorizationEntityInterface$r, 
+            string $action, 
+            array $context
+        ) {
             return $a->getAttributes()['department'] === $r->getAttributes()['owner_department'];
         };
 
@@ -73,7 +88,7 @@ describe('Abac/ClosureBasedAccessEvaluator', function () {
         };
 
         expect(fn() => new ClosureBasedAccessEvaluator($evaluator))
-            ->toThrow(InvalidArgumentException::class, 'First parameter must be AuthorizationEntityInterface');
+            ->toThrow(InvalidArgumentException::class, 'Parameter 1 must be '.AuthorizationEntityInterface::class);
     });
 
     it('throws exception when second parameter has wrong type hint', function () {
@@ -82,7 +97,7 @@ describe('Abac/ClosureBasedAccessEvaluator', function () {
         };
 
         expect(fn() => new ClosureBasedAccessEvaluator($evaluator))
-            ->toThrow(InvalidArgumentException::class, 'Second parameter must be AuthorizationEntityInterface');
+            ->toThrow(InvalidArgumentException::class, 'Parameter 2 must be '.AuthorizationEntityInterface::class);
     });
 
     it('throws exception when third parameter has wrong type hint', function () {
@@ -91,7 +106,7 @@ describe('Abac/ClosureBasedAccessEvaluator', function () {
         };
 
         expect(fn() => new ClosureBasedAccessEvaluator($evaluator))
-            ->toThrow(InvalidArgumentException::class, 'Third parameter must be string');
+            ->toThrow(InvalidArgumentException::class, 'Parameter 3 must be string');
     });
 
     it('throws exception when fourth parameter has wrong type hint', function () {
@@ -100,7 +115,7 @@ describe('Abac/ClosureBasedAccessEvaluator', function () {
         };
 
         expect(fn() => new ClosureBasedAccessEvaluator($evaluator))
-            ->toThrow(InvalidArgumentException::class, 'Fourth parameter must be array');
+            ->toThrow(InvalidArgumentException::class, 'Parameter 4 must be array');
     });
 
     it('accepts evaluator with correct type hints', function () {
