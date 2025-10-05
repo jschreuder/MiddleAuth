@@ -6,20 +6,26 @@ use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationMiddlewareInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
-use Psr\Log\LoggerInterface;
+use jschreuder\MiddleAuth\Util\AuthLoggerInterface;
+use jschreuder\MiddleAuth\Util\NullAuthLogger;
 
 final class DenyAllMiddleware implements AuthorizationMiddlewareInterface
 {
+    private AuthLoggerInterface $logger;
+
     public function __construct(
-        private ?LoggerInterface $logger = null
-    ) {}
+        ?AuthLoggerInterface $logger = null
+    )
+    {
+        $this->logger = $logger ?? new NullAuthLogger();
+    }
 
     public function process(
         AuthorizationRequestInterface $request,
         AuthorizationHandlerInterface $handler
     ): AuthorizationResponseInterface
     {
-        $this->logger?->info('DenyAllMiddleware rejecting request - no authorization rules matched', [
+        $this->logger->info('DenyAllMiddleware rejecting request - no authorization rules matched', [
             'subject_type' => $request->getSubject()->getType(),
             'subject_id' => $request->getSubject()->getId(),
             'resource_type' => $request->getResource()?->getType(),
