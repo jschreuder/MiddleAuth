@@ -11,14 +11,14 @@ use jschreuder\MiddleAuth\Util\NullAuthLogger;
 
 final class AuthorizationPipeline implements AuthorizationPipelineInterface
 {
+    private AuthLoggerInterface $logger;
+
     public function __construct(
         private \SplQueue $queue,
-        private ?AuthLoggerInterface $logger = null
+        ?AuthLoggerInterface $logger = null
     )
     {
-        if (is_null($logger)) {
-            $this->logger = new NullAuthLogger();
-        }
+        $this->logger = $logger ?? new NullAuthLogger();
     }
 
     public function withHandler(AuthorizationHandlerInterface $handler): self

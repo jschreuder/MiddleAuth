@@ -12,14 +12,14 @@ use jschreuder\MiddleAuth\Util\NullAuthLogger;
 
 final class AbacMiddleware implements AuthorizationMiddlewareInterface
 {
+    private AuthLoggerInterface $logger;
+
     public function __construct(
         private PolicyProviderInterface $policyProvider,
-        private ?AuthLoggerInterface $logger = null
+        ?AuthLoggerInterface $logger = null
     )
     {
-        if (is_null($logger)) {
-            $this->logger = new NullAuthLogger();
-        }
+        $this->logger = $logger ?? new NullAuthLogger();
     }
 
     public function process(
