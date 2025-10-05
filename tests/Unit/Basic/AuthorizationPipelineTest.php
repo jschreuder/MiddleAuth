@@ -12,25 +12,25 @@ describe('Basic\AuthorizationPipeline', function () {
         Mockery::close();
     });
 
-    it('should throw exception when pipeline is empty', function () {
+    it('throws exception when pipeline is empty', function () {
         $queue = new \SplQueue();
         $pipeline = new AuthorizationPipeline($queue);
 
         $pipeline->process(Mockery::mock(AuthorizationRequestInterface::class));
     })->throws(\RuntimeException::class, 'Pipeline is empty, no handlers to process.');
 
-    it('should return new instance with handler added', function () {
+    it('returns new instance with handler added', function () {
         $queue = new \SplQueue();
         $pipeline = new AuthorizationPipeline($queue);
         $handler = Mockery::mock(AuthorizationHandlerInterface::class);
 
         $newPipeline = $pipeline->withHandler($handler);
 
-        $this->assertNotSame($pipeline, $newPipeline);
-        $this->assertInstanceOf(AuthorizationPipeline::class, $newPipeline);
+        expect($newPipeline)->not->toBe($pipeline);
+        expect($newPipeline)->toBeInstanceOf(AuthorizationPipeline::class);
     });
 
-    it('should not modify original pipeline when adding handler', function () {
+    it('does not modify original pipeline when adding handler', function () {
         $queue = new \SplQueue();
         $pipeline = new AuthorizationPipeline($queue);
         $handler = Mockery::mock(AuthorizationHandlerInterface::class);
@@ -42,7 +42,7 @@ describe('Basic\AuthorizationPipeline', function () {
             ->toThrow(\RuntimeException::class, 'Pipeline is empty, no handlers to process.');
     });
 
-    it('should process first handler in queue', function () {
+    it('processes first handler in queue', function () {
         $queue = new \SplQueue();
         $handler = Mockery::mock(AuthorizationHandlerInterface::class);
         $queue->enqueue($handler);
@@ -74,10 +74,10 @@ describe('Basic\AuthorizationPipeline', function () {
 
         $result = $pipeline->process($request);
 
-        $this->assertSame($response, $result);
+        expect($result)->toBe($response);
     });
 
-    it('should process handlers in FIFO order', function () {
+    it('processes handlers in FIFO order', function () {
         $queue = new \SplQueue();
         $handler1 = Mockery::mock(AuthorizationHandlerInterface::class);
         $handler2 = Mockery::mock(AuthorizationHandlerInterface::class);
@@ -115,7 +115,7 @@ describe('Basic\AuthorizationPipeline', function () {
         $this->assertSame($response, $result);
     });
 
-    it('should allow chaining multiple handlers', function () {
+    it('allows chaining multiple handlers', function () {
         $queue = new \SplQueue();
         $pipeline = new AuthorizationPipeline($queue);
 

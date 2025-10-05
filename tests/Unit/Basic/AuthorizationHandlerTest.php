@@ -10,14 +10,14 @@ describe('Basic\AuthorizationHandler', function () {
         Mockery::close();
     });
 
-    it('should throw exception when no handlers are left in queue', function () {
+    it('throws an exception when no handlers are left in queue', function () {
         $queue = new \SplQueue();
         $handler = new AuthorizationHandler($queue);
 
         $handler->handle(Mockery::mock(AuthorizationRequestInterface::class));
     })->throws(\RuntimeException::class, 'No more handlers to call on.');
 
-    it('should throw exception when handler is called twice', function () {
+    it('throws an exception when handler is called twice', function () {
         $queue = new \SplQueue();
         $queue->enqueue(Mockery::mock(AuthorizationMiddlewareInterface::class));
         $queue->enqueue(Mockery::mock(AuthorizationMiddlewareInterface::class));
@@ -35,7 +35,7 @@ describe('Basic\AuthorizationHandler', function () {
         $handler->handle($request);
     })->throws(\RuntimeException::class, 'Already processed, cannot be ran twice.');
 
-    it('should process middleware and return response', function () {
+    it('processes middleware and return response', function () {
         $queue = new \SplQueue();
         $middleware = Mockery::mock(AuthorizationMiddlewareInterface::class);
         $queue->enqueue($middleware);
@@ -51,10 +51,10 @@ describe('Basic\AuthorizationHandler', function () {
 
         $result = $handler->handle($request);
 
-        $this->assertSame($response, $result);
+        expect($result)->toBe($response);
     });
 
-    it('should create new handler instance with remaining queue', function () {
+    it('creates new handler instance with remaining queue', function () {
         $queue = new \SplQueue();
         $middleware1 = Mockery::mock(AuthorizationMiddlewareInterface::class);
         $middleware2 = Mockery::mock(AuthorizationMiddlewareInterface::class);
