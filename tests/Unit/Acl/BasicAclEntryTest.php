@@ -19,57 +19,57 @@ beforeEach(function () {
 
 describe('BasicAclEntry', function () {
     it('matches actor with exact match', function () {
-        $entry = new BasicAclEntry('user::123', 'post::456', $this->action, null);
+        $entry = new BasicAclEntry('user::123', 'post::456', $this->action);
         expect($entry->matchesActor($this->actor))->toBeTrue();
     });
 
     it('matches actor with ID wildcard', function () {
-        $entry = new BasicAclEntry('user::*', 'post::456', $this->action, null);
+        $entry = new BasicAclEntry('user::*', 'post::456', $this->action);
         expect($entry->matchesActor($this->actor))->toBeTrue();
     });
 
     it('matches actor with full wildcard', function () {
-        $entry = new BasicAclEntry('*', 'post::456', $this->action, null);
+        $entry = new BasicAclEntry('*', 'post::456', $this->action);
         expect($entry->matchesActor($this->actor))->toBeTrue();
     });
 
     it('does not match actor with different type', function () {
-        $entry = new BasicAclEntry('admin::*', 'post::456', $this->action, null);
+        $entry = new BasicAclEntry('admin::*', 'post::456', $this->action);
         expect($entry->matchesActor($this->actor))->toBeFalse();
     });
 
     it('matches resource with exact match', function () {
-        $entry = new BasicAclEntry('user::123', 'post::456', $this->action, null);
+        $entry = new BasicAclEntry('user::123', 'post::456', $this->action);
         expect($entry->matchesResource($this->resource))->toBeTrue();
     });
 
     it('matches resource with ID wildcard', function () {
-        $entry = new BasicAclEntry('user::123', 'post::*', $this->action, null);
+        $entry = new BasicAclEntry('user::123', 'post::*', $this->action);
         expect($entry->matchesResource($this->resource))->toBeTrue();
     });
 
     it('matches resource with full wildcard', function () {
-        $entry = new BasicAclEntry('user::123', '*', $this->action, null);
+        $entry = new BasicAclEntry('user::123', '*', $this->action);
         expect($entry->matchesResource($this->resource))->toBeTrue();
     });
 
     it('does not match resource with different type', function () {
-        $entry = new BasicAclEntry('user::123', 'comment::*', $this->action, null);
+        $entry = new BasicAclEntry('user::123', 'comment::*', $this->action);
         expect($entry->matchesResource($this->resource))->toBeFalse();
     });
 
     it('matches action with exact match', function () {
-        $entry = new BasicAclEntry('user::123', 'post::456', $this->action, null);
+        $entry = new BasicAclEntry('user::123', 'post::456', $this->action);
         expect($entry->matchesAction($this->action))->toBeTrue();
     });
 
     it('matches action with wildcard', function () {
-        $entry = new BasicAclEntry('user::123', 'post::456', '*', null);
+        $entry = new BasicAclEntry('user::123', 'post::456', '*');
         expect($entry->matchesAction('any_action'))->toBeTrue();
     });
 
     it('does not match action with different action', function () {
-        $entry = new BasicAclEntry('user::123', 'post::456', 'edit', null);
+        $entry = new BasicAclEntry('user::123', 'post::456', 'edit');
         expect($entry->matchesAction($this->action))->toBeFalse();
     });
 });

@@ -160,7 +160,7 @@ $pipeline = (new AuthorizationPipeline(new \SplQueue()))
 
 ```php
 use jschreuder\MiddleAuth\Abac\{AbacMiddleware, BasicPolicyProvider, BasicPolicy};
-use jschreuder\MiddleAuth\Util\ClosureBasedAccessEvaluator;
+use jschreuder\MiddleAuth\Abac\ClosureBasedAccessEvaluator;
 
 // Define attribute-based policies
 $ownerCanEdit = new BasicPolicy(

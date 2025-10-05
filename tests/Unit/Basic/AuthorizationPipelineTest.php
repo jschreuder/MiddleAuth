@@ -112,7 +112,7 @@ describe('Basic\AuthorizationPipeline', function () {
 
         $result = $pipeline->process($request);
 
-        $this->assertSame($response, $result);
+        expect($result)->toBe($response);
     });
 
     it('allows chaining multiple handlers', function () {
@@ -153,7 +153,7 @@ describe('Basic\AuthorizationPipeline', function () {
 
         $result = $newPipeline->process($request);
 
-        $this->assertSame($response, $result);
+        expect($result)->toBe($response);
     });
 
     it('logs warning when pipeline is empty', function () {
