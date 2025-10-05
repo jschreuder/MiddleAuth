@@ -5,11 +5,11 @@ use jschreuder\MiddleAuth\Abac\PolicyInterface;
 use jschreuder\MiddleAuth\Abac\PoliciesCollection;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-afterEach(function () {
-    Mockery::close();
-});
-
 describe('BasicPolicyProvider', function () {
+    afterEach(function () {
+        Mockery::close();
+    });
+
     it('returns all policies', function () {
         $policy1 = Mockery::mock(PolicyInterface::class);
         $policy2 = Mockery::mock(PolicyInterface::class);

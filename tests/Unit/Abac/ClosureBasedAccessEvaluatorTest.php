@@ -3,11 +3,11 @@
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 use jschreuder\MiddleAuth\Abac\ClosureBasedAccessEvaluator;
 
-afterEach(function () {
-    Mockery::close();
-});
-
 describe('Abac/ClosureBasedAccessEvaluator', function () {
+    afterEach(function () {
+        Mockery::close();
+    });
+
     it('evaluates using the provided callable', function () {
         $actor = Mockery::mock(AuthorizationEntityInterface::class);
         $resource = Mockery::mock(AuthorizationEntityInterface::class);

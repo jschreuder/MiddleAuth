@@ -3,21 +3,21 @@
 use jschreuder\MiddleAuth\Acl\BasicAclEntry;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-afterEach(function () {
-    Mockery::close();
-});
-
-beforeEach(function () {
-    $this->actor = Mockery::mock(AuthorizationEntityInterface::class);
-    $this->actor->shouldReceive('getType')->andReturn('user');
-    $this->actor->shouldReceive('getId')->andReturn('123');
-    $this->resource = Mockery::mock(AuthorizationEntityInterface::class);
-    $this->resource->shouldReceive('getType')->andReturn('post');
-    $this->resource->shouldReceive('getId')->andReturn('456');
-    $this->action = 'view';
-});
-
 describe('BasicAclEntry', function () {
+    beforeEach(function () {
+        $this->actor = Mockery::mock(AuthorizationEntityInterface::class);
+        $this->actor->shouldReceive('getType')->andReturn('user');
+        $this->actor->shouldReceive('getId')->andReturn('123');
+        $this->resource = Mockery::mock(AuthorizationEntityInterface::class);
+        $this->resource->shouldReceive('getType')->andReturn('post');
+        $this->resource->shouldReceive('getId')->andReturn('456');
+        $this->action = 'view';
+    });
+
+    afterEach(function () {
+        Mockery::close();
+    });
+
     it('matches actor with exact match', function () {
         $entry = new BasicAclEntry('user::123', 'post::456', $this->action);
         expect($entry->matchesActor($this->actor))->toBeTrue();

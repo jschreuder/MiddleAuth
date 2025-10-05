@@ -4,11 +4,11 @@ use jschreuder\MiddleAuth\Abac\BasicPolicy;
 use jschreuder\MiddleAuth\Abac\AccessEvaluatorInterface;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-afterEach(function () {
-    Mockery::close();
-});
-
 describe('BasicPolicy', function () {
+    afterEach(function () {
+        Mockery::close();
+    });
+
     it('returns the description', function () {
         $evaluator = Mockery::mock(AccessEvaluatorInterface::class);
         $policy = new BasicPolicy($evaluator, 'Allow all access');

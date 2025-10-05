@@ -5,11 +5,11 @@ use jschreuder\MiddleAuth\Rbac\RoleInterface;
 use jschreuder\MiddleAuth\Rbac\RolesCollection;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-afterEach(function () {
-    Mockery::close();
-});
-
 describe('BasicRoleProvider', function () {
+    afterEach(function () {
+        Mockery::close();
+    });
+
     it('returns roles for actor', function () {
         $actor = Mockery::mock(AuthorizationEntityInterface::class);
         $actor->shouldReceive('getType')->once()->andReturn('user');

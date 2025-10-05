@@ -4,11 +4,11 @@ use jschreuder\MiddleAuth\Rbac\BasicRole;
 use jschreuder\MiddleAuth\Rbac\PermissionInterface;
 use jschreuder\MiddleAuth\Rbac\PermissionsCollection;
 
-afterEach(function () {
-    Mockery::close();
-});
-
 describe('BasicRole', function () {
+    afterEach(function () {
+        Mockery::close();
+    });
+
     it('returns the name', function () {
         $role = new BasicRole('admin', new PermissionsCollection());
         expect($role->getName())->toBe('admin');

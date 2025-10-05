@@ -3,19 +3,19 @@
 use jschreuder\MiddleAuth\Rbac\BasicPermission;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
 
-afterEach(function () {
-    Mockery::close();
-});
-
-beforeEach(function () {
-    $this->actor = Mockery::mock(AuthorizationEntityInterface::class);
-    $this->resource = Mockery::mock(AuthorizationEntityInterface::class);
-    $this->resource->shouldReceive('getType')->andReturn('post');
-    $this->resource->shouldReceive('getId')->andReturn('456');
-    $this->action = 'view';
-});
-
 describe('BasicPermission', function () {
+    beforeEach(function () {
+        $this->actor = Mockery::mock(AuthorizationEntityInterface::class);
+        $this->resource = Mockery::mock(AuthorizationEntityInterface::class);
+        $this->resource->shouldReceive('getType')->andReturn('post');
+        $this->resource->shouldReceive('getId')->andReturn('456');
+        $this->action = 'view';
+    });
+
+    afterEach(function () {
+        Mockery::close();
+    });
+
     it('matches resource with exact match', function () {
         $permission = new BasicPermission('post::456', $this->action);
         expect($permission->matchesResource($this->resource))->toBeTrue();
