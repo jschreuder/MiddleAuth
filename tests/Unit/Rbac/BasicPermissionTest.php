@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use jschreuder\MiddleAuth\Rbac\BasicPermission;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;

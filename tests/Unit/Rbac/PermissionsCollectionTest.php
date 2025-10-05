@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use jschreuder\MiddleAuth\Rbac\PermissionInterface;
 use jschreuder\MiddleAuth\Rbac\PermissionsCollection;

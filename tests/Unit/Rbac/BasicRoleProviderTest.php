@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use jschreuder\MiddleAuth\Rbac\BasicRoleProvider;
 use jschreuder\MiddleAuth\Rbac\RoleInterface;

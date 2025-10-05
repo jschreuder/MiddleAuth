@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use jschreuder\MiddleAuth\Basic\AuthorizationEntity;
 use jschreuder\MiddleAuth\Basic\AuthorizationHandler;
