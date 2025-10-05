@@ -7,14 +7,20 @@ use jschreuder\MiddleAuth\AuthorizationMiddlewareInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
 use jschreuder\MiddleAuth\Basic\AuthorizationResponse;
-use Psr\Log\LoggerInterface;
+use jschreuder\MiddleAuth\Util\AuthLoggerInterface;
+use jschreuder\MiddleAuth\Util\NullAuthLogger;
 
 final class RbacMiddleware implements AuthorizationMiddlewareInterface
 {
     public function __construct(
         private RoleProviderInterface $roleProvider,
-        private ?LoggerInterface $logger = null
-    ) {}
+        private ?AuthLoggerInterface $logger = null
+    )
+    {
+        if (is_null($logger)) {
+            $this->logger = new NullAuthLogger();
+        }
+    }
 
     public function process(
         AuthorizationRequestInterface $request,
@@ -27,17 +33,17 @@ final class RbacMiddleware implements AuthorizationMiddlewareInterface
 
         $roles = $this->roleProvider->getRolesForActor($actor);
 
-        $this->logger?->debug('RBAC middleware evaluating request', [
+        $this->logger->debug('RBAC middleware evaluating request', [
             'subject_type' => $actor->getType(),
             'subject_id' => $actor->getId(),
-            'resource_type' => $resource?->getType(),
-            'resource_id' => $resource?->getId(),
+            'resource_type' => $resource->getType(),
+            'resource_id' => $resource->getId(),
             'action' => $action,
             'roles_count' => $roles->count(),
         ]);
 
         foreach ($roles as $role) {
-            $this->logger?->debug('Checking role permissions', [
+            $this->logger->debug('Checking role permissions', [
                 'role_name' => $role->getName(),
                 'permissions_count' => $role->getPermissions()->count(),
             ]);
@@ -47,9 +53,9 @@ final class RbacMiddleware implements AuthorizationMiddlewareInterface
                     $permission->matchesResource($resource)
                     && $permission->matchesAction($action)
                 ) {
-                    $this->logger?->debug('Permission matched', [
+                    $this->logger->debug('Permission matched', [
                         'role_name' => $role->getName(),
-                        'resource_type' => $resource?->getType(),
+                        'resource_type' => $resource->getType(),
                         'action' => $action,
                     ]);
 
@@ -62,7 +68,7 @@ final class RbacMiddleware implements AuthorizationMiddlewareInterface
             }
         }
 
-        $this->logger?->debug('No role permissions matched, delegating to next handler');
+        $this->logger->debug('No role permissions matched, delegating to next handler');
 
         return $handler->handle($request);
     }

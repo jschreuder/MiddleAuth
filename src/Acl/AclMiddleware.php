@@ -7,14 +7,20 @@ use jschreuder\MiddleAuth\AuthorizationMiddlewareInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
 use jschreuder\MiddleAuth\Basic\AuthorizationResponse;
-use Psr\Log\LoggerInterface;
+use jschreuder\MiddleAuth\Util\AuthLoggerInterface;
+use jschreuder\MiddleAuth\Util\NullAuthLogger;
 
 final class AclMiddleware implements AuthorizationMiddlewareInterface
 {
     public function __construct(
         private AclEntriesCollection $aclEntries,
-        private ?LoggerInterface $logger = null
-    ) {}
+        private ?AuthLoggerInterface $logger = null
+    )
+    {
+        if (is_null($logger)) {
+            $this->logger = new NullAuthLogger();
+        }
+    }
 
     public function process(
         AuthorizationRequestInterface $request,
@@ -25,11 +31,11 @@ final class AclMiddleware implements AuthorizationMiddlewareInterface
         $resource = $request->getResource();
         $action = $request->getAction();
 
-        $this->logger?->debug('ACL middleware evaluating request', [
+        $this->logger->debug('ACL middleware evaluating request', [
             'subject_type' => $actor->getType(),
             'subject_id' => $actor->getId(),
-            'resource_type' => $resource?->getType(),
-            'resource_id' => $resource?->getId(),
+            'resource_type' => $resource->getType(),
+            'resource_id' => $resource->getId(),
             'action' => $action,
             'acl_entries_count' => count($this->aclEntries),
         ]);
@@ -40,7 +46,7 @@ final class AclMiddleware implements AuthorizationMiddlewareInterface
                 && $aclEntry->matchesResource($resource)
                 && $aclEntry->matchesAction($action)
             ) {
-                $this->logger?->debug('ACL entry matched', [
+                $this->logger->debug('ACL entry matched', [
                     'entry_index' => $index,
                     'subject_type' => $actor->getType(),
                     'subject_id' => $actor->getId(),
@@ -55,7 +61,7 @@ final class AclMiddleware implements AuthorizationMiddlewareInterface
             }
         }
 
-        $this->logger?->debug('No ACL entries matched, delegating to next handler');
+        $this->logger->debug('No ACL entries matched, delegating to next handler');
 
         return $handler->handle($request);
     }

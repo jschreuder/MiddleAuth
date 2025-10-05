@@ -6,15 +6,19 @@ use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationPipelineInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
-use Psr\Log\LoggerInterface;
+use jschreuder\MiddleAuth\Util\AuthLoggerInterface;
+use jschreuder\MiddleAuth\Util\NullAuthLogger;
 
 final class AuthorizationPipeline implements AuthorizationPipelineInterface
 {
-    private \SplQueue $queue;
-
-    public function __construct(\SplQueue $queue, private ?LoggerInterface $logger = null)
+    public function __construct(
+        private \SplQueue $queue,
+        private ?AuthLoggerInterface $logger = null
+    )
     {
-        $this->queue = $queue;
+        if (is_null($logger)) {
+            $this->logger = new NullAuthLogger();
+        }
     }
 
     public function withHandler(AuthorizationHandlerInterface $handler): self
@@ -27,45 +31,36 @@ final class AuthorizationPipeline implements AuthorizationPipelineInterface
     public function process(AuthorizationRequestInterface $request): AuthorizationResponseInterface
     {
         if ($this->queue->count() === 0) {
-            $this->logger?->warning('Authorization pipeline is empty, no handlers to process');
+            $this->logger->warning('Authorization pipeline is empty, no handlers to process');
             throw new \RuntimeException('Pipeline is empty, no handlers to process.');
         }
 
-        if (!is_null($this->logger)) {
-            $context = [
-                'subject_type' => $request->getSubject()->getType(),
-                'subject_id' => $request->getSubject()->getId(),
-                'resource_type' => $request->getResource()?->getType(),
-                'resource_id' => $request->getResource()?->getId(),
-                'action' => $request->getAction(),
-            ];
-
-            $this->logger->debug('Authorization pipeline processing request', $context);
-        }
+        $this->logger->debug('Authorization pipeline processing request', [
+            'subject_type' => $request->getSubject()->getType(),
+            'subject_id' => $request->getSubject()->getId(),
+            'resource_type' => $request->getResource()->getType(),
+            'resource_id' => $request->getResource()->getId(),
+            'action' => $request->getAction(),
+        ]);
 
         $queue = clone $this->queue;
         $handler = $queue->dequeue();
 
         $response = $handler->handle($request);
 
-        if (!is_null($this->logger)) {
-            $context = $context ?? [
+        $this->logger->info(
+            'Authorization decision: ' . ($response->isPermitted() ? 'PERMIT' : 'DENY'),
+            [
                 'subject_type' => $request->getSubject()->getType(),
                 'subject_id' => $request->getSubject()->getId(),
-                'resource_type' => $request->getResource()?->getType(),
-                'resource_id' => $request->getResource()?->getId(),
+                'resource_type' => $request->getResource()->getType(),
+                'resource_id' => $request->getResource()->getId(),
                 'action' => $request->getAction(),
-            ];
-
-            $this->logger->info(
-                'Authorization decision: ' . ($response->isPermitted() ? 'PERMIT' : 'DENY'),
-                array_merge($context, [
-                    'permitted' => $response->isPermitted(),
-                    'reason' => $response->getReason(),
-                    'handler' => $response->getHandler(),
-                ])
-            );
-        }
+                'permitted' => $response->isPermitted(),
+                'reason' => $response->getReason(),
+                'handler' => $response->getHandler(),
+            ]
+        );
 
         return $response;
     }

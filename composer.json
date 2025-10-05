@@ -3,12 +3,15 @@
     "description": "AuthZen implementation in PHP based on PSR-15 architecture",
     "type": "library",
     "require": {
-        "psr/log": "^3.0",
         "php": ">=8.4"
     },
     "require-dev": {
+        "psr/log": "^3.0",
         "pestphp/pest": "^4.1",
         "mockery/mockery": "^1.6"
+    },
+    "suggest": {
+        "monolog/monolog": "For logging with the default AuthLogger (or any other psr/log implementation)"
     },
     "license": "MIT",
     "autoload": {
