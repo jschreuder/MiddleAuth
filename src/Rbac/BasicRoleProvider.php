@@ -17,7 +17,7 @@ final class BasicRoleProvider implements RoleProviderInterface
 
     public function getRolesForActor(AuthorizationEntityInterface $actor): RolesCollection
     {
-        $actorIdentifier = $actor->getType().'::'.$actor->getId();
+        $actorIdentifier = $actor->getType() . '::' . $actor->getId();
         return $this->roleMap[$actorIdentifier] ?? new RolesCollection();
     }
 }

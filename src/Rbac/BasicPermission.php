@@ -25,7 +25,7 @@ final class BasicPermission implements PermissionInterface
         } elseif (substr($this->resourceMatcher, -3, 3) === '::*') {
             return $resource->getType() === substr($this->resourceMatcher, 0, -3);
         }
-        return $resource->getType().'::'.$resource->getId() === $this->resourceMatcher;
+        return ($resource->getType() . '::' . $resource->getId()) === $this->resourceMatcher;
     }
 
     /**

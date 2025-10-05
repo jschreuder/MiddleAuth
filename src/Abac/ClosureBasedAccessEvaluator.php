@@ -44,7 +44,7 @@ final class ClosureBasedAccessEvaluator implements AccessEvaluatorInterface
     private function checkType(ReflectionParameter $parameter, int $number, string $type)
     {
         if (!$parameter->hasType() || strval($parameter->getType()) !== $type) {
-            throw new InvalidArgumentException('Parameter '.$number.' must be '.$type);
+            throw new InvalidArgumentException('Parameter ' . $number . ' must be ' . $type);
         }
     }
 }

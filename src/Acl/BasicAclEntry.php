@@ -26,7 +26,7 @@ final class BasicAclEntry implements AclEntryInterface
         } elseif (substr($this->actorMatcher, -3, 3) === '::*') {
             return $actor->getType() === substr($this->actorMatcher, 0, -3);
         }
-        return $actor->getType().'::'.$actor->getId() === $this->actorMatcher;
+        return ($actor->getType() . '::' . $actor->getId()) === $this->actorMatcher;
     }
 
     /**
@@ -41,7 +41,7 @@ final class BasicAclEntry implements AclEntryInterface
         } elseif (substr($this->resourceMatcher, -3, 3) === '::*') {
             return $resource->getType() === substr($this->resourceMatcher, 0, -3);
         }
-        return $resource->getType().'::'.$resource->getId() === $this->resourceMatcher;
+        return ($resource->getType() . '::' . $resource->getId()) === $this->resourceMatcher;
     }
 
     /**
