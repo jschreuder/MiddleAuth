@@ -18,7 +18,7 @@ describe('AclMiddleware', function () {
         $resource = new AuthorizationEntity('order', '567');
 
         // Create ACL entry that matches our test case
-        $aclEntry = new BasicAclEntry('user::123', 'order::567', 'view', null);
+        $aclEntry = new BasicAclEntry('user::123', 'order::567', 'view');
         $middleware = new AclMiddleware(new AclEntriesCollection($aclEntry));
 
         $request = new AuthorizationRequest($subject, $resource, 'view', []);
@@ -37,7 +37,7 @@ describe('AclMiddleware', function () {
         $resource = new AuthorizationEntity('admin', 'settings');
 
         // Create ACL with entry that doesn't match
-        $aclEntry = new BasicAclEntry('user::123', 'order::567', 'view', null);
+        $aclEntry = new BasicAclEntry('user::123', 'order::567', 'view');
         $middleware = new AclMiddleware(new AclEntriesCollection($aclEntry));
 
         $request = new AuthorizationRequest($subject, $resource, 'view', []);
