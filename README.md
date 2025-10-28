@@ -1,8 +1,10 @@
 # MiddleAuth
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/badges/build.png?b=master)](https://scrutinizer-ci.com/g/jschreuder/MiddleAuth/?branch=master)
+![Build](https://github.com/jschreuder/MiddleAuth/actions/workflows/ci.yml/badge.svg)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=jschreuder_MiddleAuth&metric=security_rating)](https://sonarcloud.io/dashboard?id=jschreuder_MiddleAuth)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=jschreuder_MiddleAuth&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=jschreuder_MiddleAuth)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jschreuder_MiddleAuth&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jschreuder_MiddleAuth)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jschreuder_MiddleAuth&metric=coverage)](https://sonarcloud.io/dashboard?id=jschreuder_MiddleAuth)
 
 **PHP 8.4+ Authorization Framework**
 
@@ -88,10 +90,10 @@ use jschreuder\MiddleAuth\Basic\{AuthorizationEntity, AuthorizationRequest, Auth
 $aclMiddleware = new AclMiddleware(
     // User 123 can view order 456
     new BasicAclEntry('user::123', 'order::456', 'view'),
-    
+
     // All admins can do anything
     new BasicAclEntry('admin::*', '*', '*'),
-    
+
     // All users can view their own profile
     new BasicAclEntry('user::*', 'profile::*', 'view')
 );
@@ -167,7 +169,7 @@ $ownerCanEdit = new BasicPolicy(
     new ClosureBasedAccessEvaluator(
         function ($actor, $resource, $action, $context) {
             // Users can edit documents they own
-            return $action === 'edit' 
+            return $action === 'edit'
                 && $resource->getType() === 'document'
                 && $resource->getAttributes()['owner_id'] === $actor->getId();
         }
@@ -181,7 +183,7 @@ $departmentAccess = new BasicPolicy(
             // Users can view resources in their department
             $actorDept = $actor->getAttributes()['department'] ?? null;
             $resourceDept = $resource->getAttributes()['department'] ?? null;
-            
+
             return $action === 'view' && $actorDept === $resourceDept;
         }
     ),
@@ -221,22 +223,22 @@ final class DatabaseRoleProvider implements RoleProviderInterface
         private PDO $db,
         private RoleFactory $roleFactory
     ) {}
-    
+
     public function getRolesForActor(AuthorizationEntityInterface $actor): RolesCollection
     {
         // Query your database
         $stmt = $this->db->prepare(
-            'SELECT r.* FROM roles r 
-             JOIN user_roles ur ON r.id = ur.role_id 
+            'SELECT r.* FROM roles r
+             JOIN user_roles ur ON r.id = ur.role_id
              WHERE ur.user_id = :userId'
         );
         $stmt->execute(['userId' => $actor->getId()]);
-        
+
         $roles = [];
         foreach ($stmt->fetchAll() as $row) {
             $roles[] = $this->roleFactory->createFromRow($row);
         }
-        
+
         return new RolesCollection(...$roles);
     }
 }
@@ -250,7 +252,7 @@ final class BusinessRulesPolicyProvider implements PolicyProviderInterface
     public function __construct(
         private RulesEngine $rulesEngine
     ) {}
-    
+
     public function getPolicies(
         AuthorizationEntityInterface $actor,
         AuthorizationEntityInterface $resource,
@@ -262,7 +264,7 @@ final class BusinessRulesPolicyProvider implements PolicyProviderInterface
             resourceType: $resource->getType(),
             action: $action
         );
-        
+
         $policies = [];
         foreach ($rules as $rule) {
             $policies[] = new BasicPolicy(
@@ -270,7 +272,7 @@ final class BusinessRulesPolicyProvider implements PolicyProviderInterface
                 $rule->getDescription()
             );
         }
-        
+
         return new PoliciesCollection(...$policies);
     }
 }
@@ -332,9 +334,9 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         private AuthorizationPipelineInterface $authPipeline,
         private EntityFactory $entityFactory
     ) {}
-    
+
     public function process(
-        ServerRequestInterface $request, 
+        ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
         // Extract from HTTP request
@@ -342,11 +344,11 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         $resourceType = $request->getAttribute('resource_type');
         $resourceId = $request->getAttribute('resource_id');
         $action = $this->mapHttpMethodToAction($request->getMethod());
-        
+
         // Wrap in authorization entities
         $actor = $this->entityFactory->createFromUser($user);
         $resource = $this->entityFactory->create($resourceType, $resourceId);
-        
+
         // Create authorization request
         $authRequest = new AuthorizationRequest(
             $actor,
@@ -354,21 +356,21 @@ final class AuthorizationMiddleware implements MiddlewareInterface
             $action,
             context: ['ip' => $request->getServerParams()['REMOTE_ADDR'] ?? null]
         );
-        
+
         // Check authorization
         $authResponse = $this->authPipeline->process($authRequest);
-        
+
         if (!$authResponse->isPermitted()) {
             return new JsonResponse(
                 ['error' => 'Forbidden', 'reason' => $authResponse->getReason()],
                 403
             );
         }
-        
+
         // Proceed with request
         return $handler->handle($request);
     }
-    
+
     private function mapHttpMethodToAction(string $method): string
     {
         return match($method) {
@@ -465,7 +467,7 @@ final class DocumentOwnershipEvaluator implements AccessEvaluatorInterface
         if ($resource->getType() !== 'document') {
             return false;
         }
-        
+
         $ownerId = $resource->getAttributes()['owner_id'] ?? null;
         return $ownerId === $actor->getId();
     }
