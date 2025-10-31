@@ -5,6 +5,7 @@ use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
 use jschreuder\MiddleAuth\AuthorizationEntityInterface;
+use jschreuder\MiddleAuth\Exception\AuthorizationException;
 use jschreuder\MiddleAuth\Util\AuthLoggerInterface;
 
 describe('Basic\AuthorizationPipeline', function () {
@@ -17,7 +18,7 @@ describe('Basic\AuthorizationPipeline', function () {
         $pipeline = new AuthorizationPipeline($queue);
 
         $pipeline->process(Mockery::mock(AuthorizationRequestInterface::class));
-    })->throws(\RuntimeException::class, 'Pipeline is empty, no handlers to process.');
+    })->throws(AuthorizationException::class, 'Pipeline is empty, no handlers to process.');
 
     it('returns new instance with handler added', function () {
         $queue = new \SplQueue();
@@ -39,7 +40,7 @@ describe('Basic\AuthorizationPipeline', function () {
 
         // Original pipeline should still be empty
         expect(fn() => $pipeline->process(Mockery::mock(AuthorizationRequestInterface::class)))
-            ->toThrow(\RuntimeException::class, 'Pipeline is empty, no handlers to process.');
+            ->toThrow(AuthorizationException::class, 'Pipeline is empty, no handlers to process.');
     });
 
     it('processes first handler in queue', function () {
@@ -166,7 +167,7 @@ describe('Basic\AuthorizationPipeline', function () {
         $pipeline = new AuthorizationPipeline($queue, $logger);
 
         expect(fn() => $pipeline->process(Mockery::mock(AuthorizationRequestInterface::class)))
-            ->toThrow(\RuntimeException::class);
+            ->toThrow(AuthorizationException::class);
     });
 
     it('logs debug message when processing request', function () {

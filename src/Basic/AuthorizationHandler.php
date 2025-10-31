@@ -6,6 +6,7 @@ use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationMiddlewareInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
+use jschreuder\MiddleAuth\Exception\AuthorizationException;
 
 final class AuthorizationHandler implements AuthorizationHandlerInterface
 {
@@ -20,10 +21,10 @@ final class AuthorizationHandler implements AuthorizationHandlerInterface
     public function handle(AuthorizationRequestInterface $request): AuthorizationResponseInterface
     {
         if ($this->queue->count() === 0) {
-            throw new \RuntimeException('No more handlers to call on.');
+            throw new AuthorizationException('No more handlers to call on.');
         }
         if ($this->called) {
-            throw new \RuntimeException('Already processed, cannot be ran twice.');
+            throw new AuthorizationException('Already processed, cannot be ran twice.');
         }
 
         /** @var  AuthorizationMiddlewareInterface $next */

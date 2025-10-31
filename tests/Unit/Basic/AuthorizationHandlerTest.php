@@ -4,6 +4,7 @@ use jschreuder\MiddleAuth\Basic\AuthorizationHandler;
 use jschreuder\MiddleAuth\AuthorizationMiddlewareInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
+use jschreuder\MiddleAuth\Exception\AuthorizationException;
 
 describe('Basic\AuthorizationHandler', function () {
     afterEach(function () {
@@ -15,7 +16,7 @@ describe('Basic\AuthorizationHandler', function () {
         $handler = new AuthorizationHandler($queue);
 
         $handler->handle(Mockery::mock(AuthorizationRequestInterface::class));
-    })->throws(\RuntimeException::class, 'No more handlers to call on.');
+    })->throws(AuthorizationException::class, 'No more handlers to call on.');
 
     it('throws an exception when handler is called twice', function () {
         $queue = new \SplQueue();
@@ -33,7 +34,7 @@ describe('Basic\AuthorizationHandler', function () {
 
         // Second call should throw
         $handler->handle($request);
-    })->throws(\RuntimeException::class, 'Already processed, cannot be ran twice.');
+    })->throws(AuthorizationException::class, 'Already processed, cannot be ran twice.');
 
     it('processes middleware and return response', function () {
         $queue = new \SplQueue();

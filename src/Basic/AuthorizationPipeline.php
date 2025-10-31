@@ -6,6 +6,7 @@ use jschreuder\MiddleAuth\AuthorizationHandlerInterface;
 use jschreuder\MiddleAuth\AuthorizationPipelineInterface;
 use jschreuder\MiddleAuth\AuthorizationRequestInterface;
 use jschreuder\MiddleAuth\AuthorizationResponseInterface;
+use jschreuder\MiddleAuth\Exception\AuthorizationException;
 use jschreuder\MiddleAuth\Util\AuthLoggerInterface;
 use jschreuder\MiddleAuth\Util\NullAuthLogger;
 
@@ -32,7 +33,7 @@ final class AuthorizationPipeline implements AuthorizationPipelineInterface
     {
         if ($this->queue->count() === 0) {
             $this->logger->warning('Authorization pipeline is empty, no handlers to process');
-            throw new \RuntimeException('Pipeline is empty, no handlers to process.');
+            throw new AuthorizationException('Pipeline is empty, no handlers to process.');
         }
 
         $this->logger->debug('Authorization pipeline processing request', [
