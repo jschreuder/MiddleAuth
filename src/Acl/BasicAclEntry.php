@@ -15,7 +15,7 @@ final class BasicAclEntry implements AclEntryInterface
     }
 
     /**
-     * Can match in 3 ways: a single '*' matches everything, ending on '::*' 
+     * Can match in 3 ways: a single '*' matches everything, ending on '::*'
      * means it will only have to match the type, otherwise it needs to be a
      * full match.
      */
@@ -30,7 +30,7 @@ final class BasicAclEntry implements AclEntryInterface
     }
 
     /**
-     * Can match in 3 ways: a single '*' matches everything, ending on '::*' 
+     * Can match in 3 ways: a single '*' matches everything, ending on '::*'
      * means it will only have to match the type, otherwise it needs to be a
      * full match.
      */
